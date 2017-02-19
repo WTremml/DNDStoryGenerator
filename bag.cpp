@@ -1,7 +1,7 @@
 /*
  * bag.cpp
  *
- *  Created on: Feb 10, 2017
+ *  Created on: Feb 10, 2017=
  *      cpp for bag class to hold array of weapons
  */
 
@@ -15,6 +15,7 @@
 Bag::Bag() {					//default constructor
 	bagSize=10;
 	for (int i=0; i<bagSize; i++) {					//bag is array of weapons
+
 		bag1[i].reset(Weapon::empty, -1, -1, -1);	//set bag as empty
 	}
 	carrying=0;

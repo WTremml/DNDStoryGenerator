@@ -11,6 +11,7 @@ Weapon::Weapon() {					//default constructor
 	wName = sword;	//type of weapon
 	weight = 3;		//weight of weapon
 	damage = 3;		//how much damage each hit of weapon inflicts
+
 	xLocation=yLocation=zLocation=0;	//set original location as (0,0,0)
 }
 Weapon::Weapon(int wName1, int x, int y, int z) {
@@ -18,6 +19,7 @@ Weapon::Weapon(int wName1, int x, int y, int z) {
 	xLocation=x;
 	yLocation=y;
 	zLocation=z;
+
 
 	//if sword
 	if (wName==sword) {
@@ -34,8 +36,10 @@ Weapon::Weapon(int wName1, int x, int y, int z) {
 		weight=2;
 		damage=3;
 	}
+
 	//if poison
 	else if (wName==poison) {
+
 		weight=1;
 		damage=1;
 	}
@@ -49,6 +53,7 @@ Weapon::Weapon(int wName1, int x, int y, int z) {
 		weight=0;
 		damage=0;
 	}
+
 	//if no weapon in space in bag
 	else if (wName==medicine) {
 		weight=1;
@@ -56,14 +61,17 @@ Weapon::Weapon(int wName1, int x, int y, int z) {
 		//treat medicine like weapon in bag, BUT:
 			//restrict so user cannot fight monster with medicine
 	}
+
 }
 Weapon::Weapon(Weapon& old){		//copy constructor
 	wName=old.wName;
 	weight=old.weight;
 	damage=old.damage;
+
 	xLocation=old.xLocation;
 	yLocation=old.yLocation;
 	zLocation=old.zLocation;
+
 }
 int Weapon::getWeight() {			//return weight
 	return weight;
@@ -74,11 +82,13 @@ int Weapon::getDamage() {			//return damage inflicts
 int Weapon::getType() {				//return type of weapon
 	return wName;
 }
+
 void Weapon::reset(int wN, int x, int y, int z) {		//reset weapon
 	wName=wN;
 	xLocation=x;
 	yLocation=y;
 	zLocation=z;
+
 
 	//if sword
 	if (wName==sword) {
@@ -95,8 +105,10 @@ void Weapon::reset(int wN, int x, int y, int z) {		//reset weapon
 		weight=2;
 		damage=3;
 	}
+
 	//if poison
 	else if (wName==poison) {
+
 		weight=1;
 		damage=1;
 	}
@@ -110,16 +122,19 @@ void Weapon::reset(int wN, int x, int y, int z) {		//reset weapon
 		weight=0;
 		damage=0;
 	}
+
 	//if medicine
 	else if (wName==medicine) {
 		weight=1;
 		damage=0;
 	}
+
 }
 void Weapon::reset(Weapon w) {	//change type of weapon in bag
 	wName=w.getType();
 	weight=w.getWeight();
 	damage=w.getDamage();
+
 	xLocation=w.getX();
 	yLocation=w.getY();
 	zLocation=w.getZ();
@@ -137,4 +152,5 @@ void Weapon::setLoc(int x, int y, int z) {	//set weapon location
 	xLocation=x;
 	yLocation=y;
 	zLocation=z;			//if loc irrelevant, set as (-1, -1, -1)
+
 }

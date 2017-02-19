@@ -5,11 +5,14 @@
  *      cpp file for monster class
  */
 
+
 #include "monster.h"
+
 
 Monster::Monster() {		//default constructor
 	xLocation=0;			//xLocation of monster
 	yLocation=0;			//yLocation of monster
+
 	zLocation=z;
 	aggressive=rand()%101;	//how aggressive monster is 0-100
 	wandering=rand()%101;	//whether monster moves or not on 0-100 scale
@@ -21,15 +24,18 @@ Monster::Monster(int type1, int wander, int agg, int x, int y, int z) {
 	xLocation=x;
 	yLocation=y;
 	zLocation=z;
+
 	aggressive=agg;
 	wandering=wander;
 	health=100;
 }
+
 Monster::Monster(Monster& old) {	//copy constructor
 	type=old.type;
 	xLocation=old.xLocation;
 	yLocation=old.yLocation;
 	zLocation=old.zLocation;
+
 	aggressive=old.aggressive;
 	wandering=old.wandering;
 	health=old.health;
@@ -37,3 +43,4 @@ Monster::Monster(Monster& old) {	//copy constructor
 int Monster::getType() {			//get type of monster
 	return type;
 }
+
