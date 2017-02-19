@@ -5,6 +5,9 @@
  *     header file for bag class
  *     		contains array of weapon classes
  */
+#ifndef BAG_H
+#define BAG_H
+
 #include "weapon.h"
 
 class Bag {
@@ -25,3 +28,5 @@ public:
 	Weapon getW(int index);		//get weapon in index in bag1 array
 	void print();				//prints out types of all weapons in bag in order
 };
+
+#endif

@@ -1,8 +1,8 @@
 /*
  * bag.cpp
  *
- *  Created on: Feb 10, 2017
- *      cpp for bag class
+ *  Created on: Feb 10, 2017=
+ *      cpp for bag class to hold array of weapons
  */
 
 #include "bag.h"
@@ -15,7 +15,8 @@
 Bag::Bag() {					//default constructor
 	bagSize=10;
 	for (int i=0; i<bagSize; i++) {					//bag is array of weapons
-		bag1[i].reset(Weapon::empty);				//set bag as empty
+
+		bag1[i].reset(Weapon::empty, -1, -1, -1);	//set bag as empty
 	}
 	carrying=0;
 }
@@ -62,8 +63,8 @@ void Bag::addWeapon(Weapon w) {	//add item w to bag
 void Bag::dropWeapon(Weapon w) {	//drop item w from bag
 	bool end=false;
 	for (int i=0; i<bagSize && !end; i++) {
-		if (bag1[i].getType() == w.getType()) {	//if weapon is w
-			bag1[i].reset(Weapon::empty);		//make weapon slot empty in bag
+		if (bag1[i].getType() == w.getType()) {			//if weapon is w
+			bag1[i].reset(Weapon::empty, -1, -1, -1);	//make weapon slot empty in bag
 			end=true;
 		}
 		carrying--;								//bag holds one less item
