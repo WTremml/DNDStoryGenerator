@@ -5,10 +5,7 @@
  *     header file for bag class
  *     		contains array of weapon classes
  */
-<<<<<<< HEAD
 
-=======
->>>>>>> origin/master
 #ifndef BAG_H
 #define BAG_H
 
@@ -31,9 +28,8 @@ public:
     void dropWeapon(Weapon w);	//drop item w from bag
     Weapon getW(int index);		//get weapon in index in bag1 array
     void print();				//prints out types of all weapons in bag in order
+    bool armed();				//return true if weapons left
+    int getIndex(int w);		//return index of weapon if in bag
+    void weapUsed(int index, int uses);		//decreases usesLeft of bag[index] by uses
 };
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
 #endif

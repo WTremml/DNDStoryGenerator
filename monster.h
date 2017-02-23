@@ -13,7 +13,6 @@
 
 class Monster: public Character {
 private:
-<<<<<<< HEAD
     int aggressive;			//how aggressive monster is
     int wandering;			//whether monster moves or not
     int type;				//0 if small, 1 if big monster
@@ -23,17 +22,8 @@ public:
     Monster(Monster& old);	//copy constructor
     ~Monster() {}			//destructor
     int getType();			//get type of monster
-=======
-	int aggressive;			//how aggressive monster is
-	int wandering;			//whether monster moves or not
-	int type;				//0 if small, 1 if big monster
-public:
-	Monster();				//default constructor
-	Monster(int type, int wander, int agg, int x, int y, int z);
-	Monster(Monster& old);	//copy constructor
-	~Monster() {}			//destructor
-	int getType();			//get type of monster
->>>>>>> origin/master
+    int getAggressive();	//get how aggressive
+    int getPower();			//get how often hurt person fighting it
 };
 
 #endif

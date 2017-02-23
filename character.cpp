@@ -8,8 +8,7 @@
 #include "character.h"
 
 Character::Character() {			//default constructor
-<<<<<<< HEAD
-    health=100;						//measure of character health
+    health=10;				//measure of character health (10=max)
     xLocation = 0;			//get x location
     yLocation = 0;			//get ylocation
     zLocation = 0;			//get zLocation
@@ -19,25 +18,14 @@ Character::Character(Character& old) {	//copy constructor
     xLocation=old.xLocation;
     yLocation=old.yLocation;
     zLocation=old.zLocation;
-=======
-	health=100;						//measure of character health
-	xLocation = 0;			//get x location
-	yLocation = 0;			//get ylocation
-
-	zLocation = 0;			//get zLocation
 }
-Character::Character(Character& old) {	//copy constructor
-	health=old.health;
-	xLocation=old.xLocation;
-	yLocation=old.yLocation;
-	zLocation=old.zLocation;
-
->>>>>>> origin/master
-}
-void Character::injured() {				//decrement health if injured
-    health-=10;
+void Character::injured(int n) {		//decrement health if injured
+    health-=n;
 }
 int Character::getHealth() {			//return health
+    if (health<0) {
+        health=0;						//can't display negative health
+    }
     return health;
 }
 int Character::getXLoc() {				//get x location of character
@@ -49,14 +37,6 @@ int Character::getYLoc() {				//get y location of character
 int Character::getZLoc() {				//get z location of character
     return zLocation;
 }
-
-int Character::getZLoc() {				//get z location of character
-	return zLocation;
-}
-void Character::fight() {				//if fight monster
-<<<<<<< HEAD
-    //fight
-}
 void Character::run() {					//if run away from monster
     //run
 }
@@ -64,21 +44,9 @@ void Character::setLoc(int x, int y, int z) {	//set location of character
     xLocation=x;
     yLocation=y;
     zLocation=z;
-=======
-	//fight
-}
-void Character::run() {					//if run away from monster
-	//run
-}
-void Character::setLoc(int x, int y, int z) {	//set location of character
-	xLocation=x;
-	yLocation=y;
-	zLocation=z;
-
->>>>>>> origin/master
 }
 bool Character::isDead() {				//return true if dead
-    if (health==0)
+    if (health<=0)
         return true;
     return false;
 }
