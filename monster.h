@@ -22,8 +22,11 @@ public:
     Monster(Monster& old);	//copy constructor
     ~Monster() {}			//destructor
     int getType();			//get type of monster
+<<<<<<< HEAD
     int getAggressive();	//get how aggressive
     int getPower();			//get how often hurt person fighting it
+=======
+>>>>>>> master
 };
 
 #endif

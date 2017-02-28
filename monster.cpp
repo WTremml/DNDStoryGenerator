@@ -10,7 +10,11 @@
 Monster::Monster() {		//default constructor
     xLocation=0;			//xLocation of monster
     yLocation=0;			//yLocation of monster
+<<<<<<< HEAD
     zLocation=0;			//zLocation of monster
+=======
+    zLocation=0;
+>>>>>>> master
     aggressive=rand()%101;	//how aggressive monster is 0-100
     wandering=rand()%101;	//whether monster moves or not on 0-100 scale
     health=10;				//health of monster
@@ -36,6 +40,7 @@ Monster::Monster(Monster& old) {	//copy constructor
 }
 int Monster::getType() {			//get type of monster
     return type;
+<<<<<<< HEAD
 }
 int Monster::getAggressive() {		//get how aggressive
     return aggressive;
@@ -45,4 +50,7 @@ int Monster::getPower() {			//get how often hurt person fighting monster
         return 4;			//person hurt 25% of time when fighting
     else
         return 2;			//person hurt 50% of time when fighting
+=======
+
+>>>>>>> master
 }

@@ -7,6 +7,10 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 #include <string>
 #include <iostream>
 using namespace std;
@@ -42,4 +46,8 @@ public:
     void used();						//weapon used - decrease uses left by 1
     void setUses(int uses);				//set usesLeft
 };
+<<<<<<< HEAD
 #endif
+=======
+#endif
+>>>>>>> master

@@ -68,6 +68,7 @@ void Bag::dropWeapon(Weapon w) {	//drop item w from bag
         }
         carrying--;								//bag holds one less item
     }
+<<<<<<< HEAD
 }
 int Bag::getIndex(int wType) {		//return index of weapon type in bag
     for (int i=0; i<bagSize; i++) {
@@ -76,6 +77,8 @@ int Bag::getIndex(int wType) {		//return index of weapon type in bag
         }
     }
     return -1;										//return -1 if not found
+=======
+>>>>>>> master
 }
 Weapon Bag::getW(int index) {		//return weapon in index
     Weapon temp;

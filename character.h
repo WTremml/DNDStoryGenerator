@@ -8,6 +8,10 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 class Character {
 protected:
     int health;			//measure of character health

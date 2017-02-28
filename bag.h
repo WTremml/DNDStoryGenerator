@@ -32,4 +32,8 @@ public:
     int getIndex(int w);		//return index of weapon if in bag
     void weapUsed(int index, int uses);		//decreases usesLeft of bag[index] by uses
 };
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 #endif

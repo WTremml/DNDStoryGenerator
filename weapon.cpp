@@ -8,6 +8,10 @@
 #include "weapon.h"
 
 Weapon::Weapon() {					//default constructor
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     wName = sword;	//type of weapon
     weight = 3;		//weight of weapon
     damage = 3;		//how much damage each hit of weapon inflicts
@@ -66,7 +70,10 @@ Weapon::Weapon(Weapon& old){		//copy constructor
     xLocation=old.xLocation;
     yLocation=old.yLocation;
     zLocation=old.zLocation;
+<<<<<<< HEAD
     usesLeft=old.usesLeft;
+=======
+>>>>>>> master
 }
 int Weapon::getWeight() {			//return weight
     return weight;
@@ -77,9 +84,13 @@ int Weapon::getDamage() {			//return damage inflicts
 int Weapon::getType() {				//return type of weapon
     return wName;
 }
+<<<<<<< HEAD
 int Weapon::getUses() {
     return usesLeft;
 }
+=======
+
+>>>>>>> master
 void Weapon::reset(int wN, int x, int y, int z) {		//reset weapon
     wName=wN;
     xLocation=x;
@@ -145,6 +156,7 @@ void Weapon::setLoc(int x, int y, int z) {	//set weapon location
     xLocation=x;
     yLocation=y;
     zLocation=z;			//if loc irrelevant, set as (-1, -1, -1)
+<<<<<<< HEAD
 }
 void Weapon::used() {	//one less use
     usesLeft--;						//only use this method if calling directly from weapon
@@ -157,4 +169,6 @@ void Weapon::setUses(int uses) {		//set usesLeft
     if (usesLeft<=0) {				//call if from bag/person/character, etc --> affects actual weapon
         reset(5, -1, -1, -1);		//reset as empty weapon aka drop weapon
     }
+=======
+>>>>>>> master
 }

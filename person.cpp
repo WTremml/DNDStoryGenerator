@@ -124,4 +124,8 @@ Bag Person::getBag() {				//return copy of bag
     Bag bag2;
     bag2=bag1;
     return bag2;
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
 }
