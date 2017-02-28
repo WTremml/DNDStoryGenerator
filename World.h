@@ -137,9 +137,13 @@ public:
 	//destructor
 	~World();
 
+	//Generates a 20x20x3 array with 1 as walls
 	void GenerateMap( void );
+	//takes Room coordinates and puts them on the map
 	void makeRoom(Room A);
+	//based on tile type, if a person can walk through it. Mostly used for corridors
 	bool IsPassable( int x, int y, int z );
+	// prints map to screen for testing using std::cout, not for the final version
 	void printMap();
 
 };

@@ -17,20 +17,11 @@ int carrying;			//number nonempty items in bag
 
 
 Bag::Bag() {					//default constructor
-<<<<<<< HEAD
     bagSize=10;
     for (int i=0; i<bagSize; i++) {					//bag is array of weapons
         bag1[i].reset(Weapon::empty, -1, -1, -1);	//set bag as empty
     }
     carrying=0;
-=======
-	bagSize=10;
-	for (int i=0; i<bagSize; i++) {					//bag is array of weapons
-
-		bag1[i].reset(Weapon::empty, -1, -1, -1);	//set bag as empty
-	}
-	carrying=0;
->>>>>>> origin/master
 }
 Bag::Bag(Weapon bag2[10]) {	//parameterized constructor
     bagSize=10;
@@ -73,7 +64,6 @@ void Bag::addWeapon(Weapon w) {	//add item w to bag
     }
 }
 void Bag::dropWeapon(Weapon w) {	//drop item w from bag
-<<<<<<< HEAD
     bool end=false;
     for (int i=0; i<bagSize && !end; i++) {
         if (bag1[i].getType() == w.getType()) {			//if weapon is w
@@ -82,16 +72,6 @@ void Bag::dropWeapon(Weapon w) {	//drop item w from bag
         }
         carrying--;								//bag holds one less item
     }
-=======
-	bool end=false;
-	for (int i=0; i<bagSize && !end; i++) {
-		if (bag1[i].getType() == w.getType()) {			//if weapon is w
-			bag1[i].reset(Weapon::empty, -1, -1, -1);	//make weapon slot empty in bag
-			end=true;
-		}
-		carrying--;								//bag holds one less item
-	}
->>>>>>> origin/master
 }
 Weapon Bag::getW(int index) {		//return weapon in index
     Weapon temp;
