@@ -8,10 +8,6 @@
 #ifndef CHARACTER_H
 #define CHARACTER_H
 
-#include <cstdlib>
-#ifndef CHARACTER_H
-#define CHARACTER_H
-
 
 class Character {
 protected:

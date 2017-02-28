@@ -35,10 +35,6 @@ int Character::getYLoc() {				//get y location of character
 int Character::getZLoc() {				//get z location of character
     return zLocation;
 }
-
-int Character::getZLoc() {				//get z location of character
-	return zLocation;
-}
 void Character::fight() {				//if fight monster
 	//fight
 }

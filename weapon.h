@@ -7,9 +7,6 @@
 #ifndef WEAPON_H
 #define WEAPON_H
 
-#ifndef WEAPON_H
-#define WEAPON_H
-
 
 #include <string>
 #include <iostream>

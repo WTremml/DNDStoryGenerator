@@ -10,7 +10,7 @@
 Monster::Monster() {		//default constructor
     xLocation=0;			//xLocation of monster
     yLocation=0;			//yLocation of monster
-    zLocation=z;
+    zLocation=0;
     aggressive=rand()%101;	//how aggressive monster is 0-100
     wandering=rand()%101;	//whether monster moves or not on 0-100 scale
     health=100;				//health of monster
@@ -38,7 +38,3 @@ int Monster::getType() {			//get type of monster
     return type;
 
 }
-int Monster::getType() {			//get type of monster
-	return type;
-}
-
