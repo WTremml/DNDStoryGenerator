@@ -3,31 +3,44 @@
  *
  *  Created on: Feb 10, 2017
  *     header file for bag class
- *     		contains array of weapon classes
  */
 
 #ifndef BAG_H
 #define BAG_H
 
 #include "weapon.h"
+#include "potion.h"
+#include "gold.h"
+#include "key.h"
+
+#include <iostream>
+using namespace std;
 
 class Bag {
 private:
-    Weapon bag1[10];		//bag is array of weapons
-    int bagSize;			//max capactiy of bag
-    int carrying;			//number nonempty items in bag
+    int goldCount;              //infinite amount of gold possible -> weight=value
+    int potionCount;
+    int keyCount;               //either has 0 or 1 key at any time
 public:
     Bag();						//default constructor
-    Bag(Weapon* bag2);			//parameterized constructor
     Bag(Bag& old);				//copy constructor
     ~Bag() {}					//destructor
-    int getWeight();			//get weight of items in bag
-    int getSize();				//get size of bag
-    int getItemNum();			//get number of non-empty items in bag
-    void addWeapon(Weapon w);	//add item w to bag
-    void dropWeapon(Weapon w);	//drop item w from bag
-    Weapon getW(int index);		//get weapon in index in bag1 array
-    void print();				//prints out types of all weapons in bag in order
+    
+    int getGoldC();             //get count of gold in bag
+    int getPotionC();           //get count of potions in bag
+    int getKeyC();              //get count of keys in bag
+    
+    void useGold(int used);     //use gold
+    void usePotion();           //use potion
+    void useKey();              //use key
+    
+    Bag& operator=(Bag& rhs);   //overload = sign in terms of bag
+    
+    void print();				//prints out types of all in bag in order
+    
+    void findGold();            //find gold
+    void findPotion();          //find potion
+    void findKey();             //find key
 };
 
 #endif

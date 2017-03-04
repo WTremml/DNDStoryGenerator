@@ -20,17 +20,22 @@ public:
     Character(Character& old);	//copy constructor
     ~Character() {}				//destructor
     
-    void injured();				//decrement health if injured
+    void injured(int damage);	//decrement health if injured
     int getHealth();			//return health
     int getXLoc();				//get x location of character
     int getYLoc();				//get y location of character
     int getZLoc();				//get y location of character
-    
-    void fight();				//if fight monster
-    void run();					//if run away from monster
-    
+    void setHealth(int h);      //set new health
+
     void setLoc(int x, int y, int z);	//set location of character
     bool isDead();				//returns true if health=0
+    
+    void moveRight();           //control character location on screen
+    void moveLeft();
+    void moveUp();
+    void moveDown();
+    void climbUp();
+    void climbDown();
 };
 
 #endif
