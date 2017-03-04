@@ -1,8 +1,4 @@
 /*
-<<<<<<< HEAD
-=======
-
->>>>>>> origin/master
  * person.h
  *
  *  Created on: Feb 14, 2017
@@ -14,32 +10,39 @@
 
 #include "character.h"
 #include "bag.h"
+#include "magic.h"
+#include "monster.h"
 
 class Person: public Character {
 private:
     string name;		//user names character for story output
-    bool male;			//T if male, F if female
-    int weightMax;		//max weight they can carry
-    int cooperative;	//spectrum of how cooperative character is (high=coop)
-    int aggressive; 	//spectrum of how aggressive character is (high=aggress)
-    Bag bag1;			//bag class is array of weapons
-    int bagSize;		//size of bag
+    Bag bag1;			//bag class contains gold, potions, keys
+    
+    Weapon w;           //each character starts with basic weapon
+    Magic m;            //each character starts with basic magic skill
+    
 public:
     Person();				//default constructor
-    Person(string name, bool male, int coop, int agg, int x, int y, int z);
+    Person(string name, int mag, int x, int y, int z);
     Person(Person& old);	//copy constructor
     ~Person() {}				//destructor
     
     void healed();				//increment health if healed
-    int getCoop();				//return how cooperative
-    int getAggress();			//return how aggressive
     Bag getBag();				//return copy of bag
     
-    void foundMonster();		//if encounter monster
-    void foundCharacter();		//if find another character
+    bool found(int x, int y, int z);    //returns true if item 'found'
+    void foundMonster(Monster m);	//if encounter monster
+    void foundCharacter();          //if find another character
+    void foundPotion(Potion p);             //if find potion
+    void foundKey(Key k);                //if find key
+    void foundGold(Gold g);               //if find gold
+    void useKey();             //use key
+    void usePotion();          //use potion
+    void useGold(int g);       //use gold
     
-    void addWeapon(Weapon w);	//add weapon to bag
-    void dropWeapon(Weapon w);	//drop weapon from bag
+    void fight(Monster m);      //fight monster
+    void run(Monster m);        //run from monster
+
 };
 
 #endif

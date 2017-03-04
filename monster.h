@@ -10,6 +10,8 @@
 #define MONSTER_H
 
 #include "character.h"
+#include <iostream>
+using namespace std;
 
 class Monster: public Character {
 private:
@@ -22,6 +24,12 @@ public:
     Monster(Monster& old);	//copy constructor
     ~Monster() {}			//destructor
     int getType();			//get type of monster
+    int getDamage();        //get damage capability of monster
+    int getAggressive();    //get aggressive
+    int getWander();        //get wandering
+    
+    void fight(Monster m);  //fight other monsters
+    void foundMonster(Monster m);   //found another monster
 };
 
 #endif
