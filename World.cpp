@@ -418,7 +418,7 @@ void World::printMap(){
 
 
 
-/*
+
 int main(void){
 	
 	//MUST include in MAIN for World.cpp to work
@@ -438,7 +438,7 @@ int main(void){
 	return(0);
 
 }
-*/
+
 
 
 
