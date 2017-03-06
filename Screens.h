@@ -15,7 +15,8 @@
 
 using namespace std;
 
-Intro(){
+void Intro(int row, int col){
+  int i;
 
   char img[45][100] = { "  ___                                                             " ,
     " (  _`\\                                                           " ,
@@ -60,20 +61,17 @@ Intro(){
     " \\_,_/_//_/\\_,_/ /___/_/_/_/_/_/\\_, /  \\___/_//_/\\_,_/\\___/   " ,
     "                               /___/                          " ,
     "  " ,
-    "  " ,
-    "  "};
+    " Press an arrow key to begin " ,
+    " Press 'q' to quit "};
 
-
-  int row,col,i;       /* to store the number of rows and *
-             * the number of colums of the screen */
-  initscr();       /* start the curses mode */
-  getmaxyx(stdscr,row,col);    /* get the number of rows and columns */
   for(i=0;i<45;i++){
     mvprintw((row-45)/2+i,(col-strlen(img[30]))/2,"%s",img[i]);
   }
+
+  //printw("Press an arrow key to begin");
+
   refresh();
   getch();
-  endwin(); 
 }
 
 #endif

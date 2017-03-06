@@ -36,7 +36,7 @@
 //map dimensions
 #define MAP_WIDTH 20
 #define MAP_HEIGHT 20
-#define MAP_LEVELS 1
+#define MAP_LEVELS 2
 
 
 // Tile types
@@ -67,38 +67,22 @@ g++ -o World World.cpp -lncurses
 
 //////////////////////////////////////
 
-
 struct Item_Type{
-	char dispCharacter;
-	int color;
-	std::string name;
+  char dispCharacter;
+  int color;
+  std::string name;
 };
 
 struct Tile_Type {
 
-	char dispCharacter;
-	int dispColor;
-	bool Passable;
+  char dispCharacter;
+  int dispColor;
+  bool Passable;
 
 };
 
-Tile_Type TileIndex[] = {
-	{' ', COLOR_WHITE, true},		//Rockfloor 	(0)
-	{'#', COLOR_BLACK, false},		//Wall 			(1)
-	{'+', COLOR_BLUE, false},		//Locked Door 	(2)
-	{'/', COLOR_BLUE, true},		//Open Door 	(3)
-	{'#', COLOR_RED, true},			//Corridor 		(4)
-	{'T', COLOR_GREEN, false},		//Tree 			(5)
-};
-
-Item_Type ItemIndex[] = {
-	{' '	, COLOR_WHITE, 	"Empty"},		//None 		 	(0)
-	{'!'	, COLOR_CYAN, 	"Potion"},		//Potion 		(1)
-	{'$'	, COLOR_YELLOW, "Gold"},	    //Gold 		 	(2)
-	{'='	, COLOR_BLACK,  "Key"},			//key 		 	(3)
-	{'S'	, COLOR_RED, 	"Weapon"},		//weapon 		(4)
-};
-
+extern Tile_Type TileIndex[];
+extern Item_Type ItemIndex[];
 
 
 class Room {
@@ -108,8 +92,8 @@ class Room {
 	// X1 is always < X2
 	// Y1 is always < Y2
 	int location[5];
-	int N_Doors;
-	int D_xy[6];
+	int num;
+	int* D_xy;
 	int center[2];
 
   public:
@@ -122,8 +106,10 @@ class Room {
 	//copy constructor
 	Room(const Room& old);
 
+	int getD_num(){ return(num); }
+
 	// changes door information on rooms 
-	void changeDoors(int num, int* arr);
+	void changeDoors(int _num, int* arr);
 
 	//changes vertices
 	void changeRoom(int x1, int x2, int y1, int y2, int z);
@@ -147,43 +133,7 @@ class Room {
 
 };
 
-
 //////////////////////////////////////
-
-
-
-class World{
-
-	// Main storage array
-	int*** MapArray;
-	Room** Room_List;
-
-  public:
-	//constructor
-	World();
-	//destructor
-	~World();
-
-	//Generates a 20x20x3 array with 1 as walls
-	void GenerateMap( void );
-	//takes Room coordinates and puts them on the map
-	void makeRoom(Room A);
-	// generates doors for rooms
-	void generateDoors(Room A);
-	// makes corridors
-	void generatePaths();
-	// makes items
-	void generateItems(Room A);
-
-
-	//based on tile type, if a person can walk through it. Mostly used for corridors
-	bool IsPassable( int x, int y, int z );
-	// prints map to screen for testing using std::cout, not for the final version
-	void printMap();
-
-};
-
-
 class SparseMat{
   private:
     bool* arr;
@@ -212,6 +162,45 @@ class SparseMat{
 
     //function to change an value for strings and index
     void changeInd(int row, int col, bool value);
+};
+
+
+//////////////////////////////////////
+
+
+
+class World{
+
+	// Main storage array
+	int*** MapArray;
+	Room** Room_List;
+	SparseMat R_Connections[MAP_LEVELS];
+
+  public:
+  	int buffer;  	
+
+	//constructor
+	World();
+	//destructor
+	~World();
+
+	//Generates a 20x20x3 array with 1 as walls
+	void GenerateMap( void );
+	//takes Room coordinates and puts them on the map
+	void makeRoom(Room A);
+	// generates doors for rooms
+	void generateDoors();
+	// makes corridors
+	void generatePaths();
+	// makes items
+	void generateItems(Room A);
+
+
+	//based on tile type, if a person can walk through it. Mostly used for corridors
+	bool IsPassable( int x, int y, int z );
+	// prints map to screen for testing using std::cout, not for the final version
+	void printMap();
+
 };
 
 
