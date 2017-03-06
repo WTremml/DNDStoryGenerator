@@ -2,7 +2,9 @@
  * character.h
  *
  *  Created on: Feb 10, 2017
- *      header file for character class
+ *      header file for character, person, and monster classes
+ *
+ *  Emily Chao
  */
 
 #ifndef CHARACTER_H

@@ -1,43 +1,19 @@
+ /*
+ * Wolrd.h
+ *
+ *  Created on: Feb 24, 2017
+ *      header file for generating the entire world dyamically
+ *		
+ *  Will Tremml
+ */
+
+
+
 // iostream is for testing, nncurses is for actual display
 //Do NOT use both sets of commands at the same time
-#include <iostream>
-#include <ncurses.h>
-#include <string>
 
-//for random number geerator
-#include <cstdlib>
-#include <ctime>
 #include "World.h"
 
-
-#define MAX_PLAYERS 20
-#define MAX_ROOM_SIZE 8
-// Minimum room size is 3
-
-//number of rooms on each floor. Could be changed to random in the future/
-#define ROOM_ITER 6
-
-//map dimensions
-#define MAP_WIDTH 20
-#define MAP_HEIGHT 20
-#define MAP_LEVELS 3
-
-
-// Tile types
-#define TILE_ROCKFLOOR		0
-#define TILE_WALL			1
-#define TILE_CLOSEDDOOR		2
-#define TILE_OPENDOOR		3
-#define TILE_CORRIDOR		4
-#define TILE_TREE			5
-#define TILE_LOCKEDDOOR		6
-
-// Item Types
-#define ITEM_NONE			0
-#define ITEM_POTION			1
-#define ITEM_GOLD			2
-#define ITEM_KEY			3
-#define ITEM_Weapon 		4
 
 
 //////////////////////////////////////
@@ -55,49 +31,26 @@ g++ -o World World.cpp -lncurses
 
 
 
-/*
-struct Item_Type{
-	char dispCharacter;
-	int color;
-	std::string name;
-};
-
-struct Tile_Type {
-
-	char dispCharacter;
-	int dispColor;
-	bool Passable;
-
-};
-
-Tile_Type TileIndex[] = {
-	{' ', COLOR_WHITE, true},		//Rockfloor 	(0)
-	{'#', COLOR_BLACK, true},		//Wall 			(1)
-	{'+', COLOR_BLUE, false},		//Closed Door 	(2)
-	{'/', COLOR_BLUE, true},		//Open Door 	(3)
-	{'#', COLOR_RED, true},			//Corridor 		(4)
-	{'T', COLOR_GREEN, false},		//Tree 			(5)
-};
-
-Item_Type ItemIndex[] = {
-	{' ', 		COLOR_WHITE, 	"Empty"},		//None 		 	(0)
-	{(char)173, COLOR_CYAN, 	"Potion"},		//Potion 		(1)
-	{(char)169, COLOR_YELLOW, 	"Gold"},	    //Gold 		 	(2)
-	{(char)170, COLOR_BLACK,    "Key"},			//key 		 	(3)
-	{(char)159, COLOR_RED, 		"Weapon"},		//weapon 		(4)
-};
-*/
-
-
 Room::Room(){
-	location[0]=-1;
-	location[1]=-1;
-	location[2]=-1;
-	location[3]=-1;
-	location[4]=-1;
+	int i;
+	int N_Doors = 0;
+	center[0] = -1;
+	center[1] = -1;
+
+	for(i=0;i<5;i++){
+		location[i]=-1;
+	}
+
+	//allows for 3 door coordinates. Only two are implemented, but three is still reasonable
+	//see generateDoors() for how to change it.
+	for(i=0;i<6;i++){
+		D_xy[i]=-1;
+	}
 }
 //Makes a room with given vertices
 Room::Room(int* arr){
+	int N_Doors = 0;
+
 	int i, temp;
 	for(i=0;i<5;i++){
 		location[i]= arr[i];
@@ -114,6 +67,51 @@ Room::Room(int* arr){
 		location[2]=location[3];
 		location[3]=temp;
 	}
+
+	center[0] = arr[0]+(arr[1]-arr[0])/2;
+	center[1] = arr[2]+(arr[3]-arr[2])/2;
+
+}
+
+//copy constructor
+Room::Room(const Room& old){
+	N_Doors = old.N_Doors;
+	N_Doors = old.N_Doors;
+
+	center[0] = old.center[0];
+	center[1] = old.center[1];
+
+
+	this->location[0]=old.location[0];
+	this->location[1]=old.location[1];
+	this->location[2]=old.location[2];
+	this->location[3]=old.location[3];
+	this->location[4]=old.location[4];
+}
+
+int Room::getCenter(int n){
+		if(n==0 || n ==1){
+			return(center[n]);
+		}else{
+			throw;
+		}
+	}
+
+
+
+void Room::changeDoors(int num, int* arr){
+	int i;
+
+	if(num > 0 && num <= 3){
+		N_Doors = num;
+	}else{
+		std::cout << "Invalid door number. Limited to 0->3." << std::endl;
+	}
+
+	for(i=0;i<2*num ;i++){
+		D_xy[i]=arr[i];
+	}
+	
 }
 
 //changes vertices
@@ -137,6 +135,9 @@ void Room::changeRoom(int x1, int x2, int y1, int y2, int z){
 	location[2]=y1;
 	location[3]=y2;
 	location[4]=z;
+
+	center[0] = location[0]+(location[1]-location[0])/2;
+	center[1] = location[2]+(location[3]-location[2])/2;
 }
 
 //produces a new pointer
@@ -227,6 +228,41 @@ bool Room::inside(int x, int y, int z){
 	}else{return(false);}
 }
 
+int Room::distance(Room A){
+	int x,y,temp;
+	int a,b;
+
+	a=getCenter(0);
+	b=getCenter(1);
+
+	x = abs(a-A.getCenter(0));
+	y = abs(b-A.getCenter(1));
+
+	temp = pow(x,2)+pow(y,2);
+	temp = sqrt(temp);
+
+	return(temp);
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 //////////////////////////////////////
 
@@ -235,6 +271,8 @@ bool Room::inside(int x, int y, int z){
 World::World(){
 	int i,j,k;
 
+	SparseMat R_Connections;
+
 	//allocating memory
 	MapArray = new int**[MAP_WIDTH];
 	for (int i = 0; i < MAP_WIDTH; ++i) {
@@ -242,6 +280,11 @@ World::World(){
 	    for (int j = 0; j < MAP_WIDTH; ++j){
 	     	MapArray[i][j] = new int[MAP_LEVELS];
 	  	}
+	 }
+
+	Room_List = new Room*[MAP_LEVELS];
+	for (int i = 0; i < ROOM_ITER; ++i) {
+		Room_List[i] = new Room[ROOM_ITER];
 	 }
 
 	 //Initializing to zero
@@ -259,13 +302,25 @@ World::~World(){
 	int i,j;
 
 	//deallocating memory
+
+	
 	for (i = 0; i < MAP_WIDTH; ++i) {
 		for (j = 0; j < MAP_HEIGHT; ++j){
   			delete [] MapArray[i][j];
   		}	
 		delete [] MapArray[i];
-		}
-		delete [] MapArray;
+	}
+	delete [] MapArray;
+
+	
+
+	// potential problems with deallocation
+	
+	for (i = 0; i < MAP_LEVELS; ++i) {
+		delete [] Room_List[i];
+	}
+	delete [] Room_List;
+	
 }
 
 //RANDOMLY GENERATES map locations
@@ -277,9 +332,6 @@ void World::GenerateMap( void ){
 
 	//intersection flag
 	int flag = -1;
-
-	//list of all the rooms
-	Room Room_List[MAP_LEVELS][ROOM_ITER];
 
 
 	for(j=0;j<MAP_LEVELS;j++){
@@ -350,6 +402,15 @@ void World::GenerateMap( void ){
 			}
 
 		}
+	for(i=0;i<iter;i++){
+		generateDoors( Room_List[j][i] );
+
+		generateItems( Room_List[j][i] );
+
+	}
+	generatePaths();
+		
+	// end of for loop that goes through floors
 	}
 }
 
@@ -359,7 +420,6 @@ void World::makeRoom(Room A){
 	int* arr = A.getLoc();
 
 	temp=arr[0];
-
 
 	while(temp <= arr[1]){
 		MapArray[temp] [arr[2]] [arr[4]] = 1;
@@ -381,6 +441,152 @@ void World::makeRoom(Room A){
 	delete[] arr;
 }
 
+void World::generateDoors(Room A){
+	int temp,i;
+	int iter=0;
+	int count =0;
+	int* arr = A.getLoc();
+	int XYs[6];
+	for(i=0;i<6;i++){
+		XYs[i]=-1;
+	}
+
+	// measuring distance that doors can go on. DN Include corners
+	int dx = arr[1]-arr[0];
+	int dy = arr[3]-arr[2];
+
+	//number of doors from 1->2
+	// Change modulus to '3' if you want three doors per room.
+	int D_num = (rand()%2)+1;
+
+	// Array of which walls will have doors.
+	// for example: x1 wall, x2 wall (vertical) or y1, y2 walls (horizontal)
+	int wall[4];
+	wall[0]=rand()%4;
+
+
+	for(i=1;i<4;i++){
+		wall[i]= (wall[i-1]+1)%4;
+	}
+	
+
+
+	// emergency run through if no doors
+	i=0;
+	while( count < D_num && i<4 ){
+
+		if( wall[i] == 0 && arr[0]!=0){
+			temp = arr[2]+dy/2;
+
+			if(IsPassable(arr[0]-1,temp,arr[4])){
+				XYs[2*count] = arr[0];
+				XYs[2*count+1] = temp;
+				MapArray[arr[0]][temp][arr[4]]=3;
+				count ++;
+			}
+		}
+		if(wall[i] == 1 && arr[1]!=MAP_WIDTH){
+			temp = arr[2]+dy/2;
+
+			if(IsPassable(arr[1]+1,temp,arr[4])){
+				XYs[2*count] = arr[1];
+				XYs[2*count+1] = temp;
+				MapArray[arr[1]][temp][arr[4]]=3;
+				count ++;
+			}
+		}
+		if(wall[i] == 2 && arr[2]!=0){
+			temp = arr[0]+dx/2;
+
+			if(IsPassable(temp,arr[2]-1,arr[4])){
+				XYs[2*count+1] = arr[2];
+				XYs[2*count] = temp;
+				MapArray[temp][arr[2]][arr[4]]=3;
+				count ++;
+			}
+		}
+		if(wall[i] == 3 && arr[3]!=MAP_HEIGHT){
+			temp = arr[0]+dx/2;
+
+			if(IsPassable(temp,arr[3]+1,arr[4])){
+				XYs[2*count+1] = arr[3];
+				XYs[2*count] = temp;
+				MapArray[temp][arr[3]][arr[4]]=3;
+				count ++;
+			}
+		}
+		i++;
+	}
+
+	A.changeDoors(count,XYs);
+
+	//std::cout << count << " doors at " << XYs[0] << " " << XYs[1] << "," << XYs[2] << " "<< XYs[3] << "," << XYs[4] << " " << XYs[5]<< std::endl;
+
+	delete[] arr;
+
+}
+
+void World::generateItems(Room A){
+	int* arr = A.getLoc();
+
+	int x,y,i;
+	int N_items = (rand()%3);
+
+	for(i=0;i<N_items;i++){
+		x = (rand()%(arr[1]-arr[0]-1))+arr[0]+1;
+		y = (rand()%(arr[3]-arr[2]-1))+arr[2]+1;
+
+		if(MapArray[x][y][arr[4]]==0) {
+			MapArray[x][y][arr[4]]=(rand()%5)+6;
+		}
+	}
+	
+
+	delete[] arr;
+}
+
+
+void World::generatePaths(){
+	int i,j,k;
+	int dist;
+
+	int temp[4];
+
+	// Room number followed by distance\
+	temp[0]=-1;
+	temp[1]=MAP_HEIGHT*MAP_WIDTH;
+	temp[2]=-1;
+	temp[3]=MAP_HEIGHT*MAP_WIDTH;
+
+	k=0;
+
+	for(j=ROOM_ITER;j>=1;j--){
+		for(i=0;i<j;i++){
+			dist =Room_List[k][j].distance(Room_List[k][i]);
+			std::cout << j << ", " << i << ": " << dist << std::endl;
+			if (dist < temp[1]){
+				temp[2]=temp[0];
+				temp[3]=temp[1];
+
+				temp[0]=i;
+				temp[1]=dist;
+			}
+			else if (dist < temp[3]){
+				temp[2]=i;
+				temp[3]=dist;
+			}
+		}
+		std::cout << "Room " << j << " is closest to " << temp[0] << ", " << temp[2] << std::endl;
+		
+		temp[0]=-1;
+		temp[1]=MAP_HEIGHT*MAP_WIDTH;
+		temp[2]=-1;
+		temp[3]=MAP_HEIGHT*MAP_WIDTH;
+	}
+	
+
+}
+
 
 bool World::IsPassable( int x, int y, int z )
 {
@@ -389,7 +595,7 @@ bool World::IsPassable( int x, int y, int z )
 		return false;
 
 	// Store the value of the tile specified
-	int TileValue = MapArray[y][x][z];
+	int TileValue = MapArray[x][y][z];
 
 	// Return true if it's passable
 	return TileIndex[TileValue].Passable;
@@ -402,7 +608,12 @@ void World::printMap(){
 	for(i=0;i<MAP_LEVELS;i++){
 		for(j=0;j<MAP_HEIGHT;j++){
 			for(k=0;k<MAP_WIDTH;k++){
-				std::cout << MapArray[k][j][i] << " ";
+					if(MapArray[k][j][i]<6){
+						std::cout << TileIndex[ MapArray[k][j][i] ].dispCharacter << " ";
+					}else{
+						std::cout << ItemIndex[ MapArray[k][j][i] -6 ].dispCharacter << " ";
+					}
+				
 			}
 			std::cout << std::endl;
 		}
@@ -419,18 +630,152 @@ void World::printMap(){
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+SparseMat::SparseMat(){
+	int i,j;
+	i=0;
+	j=ROOM_ITER;
+
+	while(j != 0){
+		i=i+j ;
+		j-- ;
+	}
+
+	size=j;
+	M=ROOM_ITER;
+
+	arr = new bool [j];
+
+	for(i=0;i<j;i++){
+		arr[i]=0;
+	}
+
+}
+//destructor
+SparseMat::~SparseMat(){
+  delete [] arr;
+}
+//copy constructor
+SparseMat::SparseMat(const SparseMat& old){
+  int i;
+  arr = new bool [old.size];
+  for(i=0;i<old.size;i++) arr[i]=old.arr[i];
+}
+
+
+//Priting loop for efficiency
+void SparseMat::printMat(){
+  int i,j;
+
+  for(i=0;i<M;i++){
+    std::cout << std::endl;
+
+    for(j=0;j<M;j++){
+      std::cout<< this->getInd(i,j) << "\t";
+    }
+  }
+
+  std::cout << std::endl;
+  std::cout << std::endl;
+}
+
+
+// This matrix starts at the indice 0x0
+// Note that this is not Math notation, but CS
+bool SparseMat::getInd(int row, int col){
+  int c,i;
+  int k=0;
+  int score=0;
+  // Checking inputs
+  if (row<0 || col<0 || row>M || col>M){
+    std::cout << "invalid inputs" << std::endl;
+    return(0);
+  }
+  else if (row == col){
+    return(0);
+  // Continues if inputs are good
+  } else {
+    if(col > row){
+      c = col;
+      col = row;
+      row = c;
+    }
+    for(i=0;i<col;i++){
+      score=score+(M-1)-i;
+    }
+    score=score+row-col-1;
+
+    return(arr[score]);
+  } 
+}
+
+
+//changes the actual data for the matrix
+void SparseMat::changeInd(int row, int col, bool value){
+  
+  int c,i;
+  int k=0;
+  int score=0;
+  // Checking inputs
+  if (row == col){
+    std::cout << "Invalid input: changing 0 distance";
+  // Continues if inputs are good
+  } else {
+    if(col > row){
+      c = col;
+      col = row;
+      row = c;
+    }
+    for(i=0;i<col;i++){
+      score=score+(M-1)-i;
+    }
+    score=score+row-col-1;
+  } 
+
+
+  arr[score]= value;
+
+  //cout << "Value of " << row << "," << col << " changed to " << arr[score] << endl;
+}
+
+
+
+
+
+
+
+
+
 int main(void){
 	
 	//MUST include in MAIN for World.cpp to work
 	srand(time(NULL));
 
-	Room test;
-	test.changeRoom(1,4,1,4,0);
-	std::cout<< test.inside(2,2,0) << std::endl;
 
-	
+
 	World game;
+
+
 	game.GenerateMap();
+
+
 	game.printMap();
 	
 

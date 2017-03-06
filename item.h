@@ -1,10 +1,11 @@
-//
-//  item.h
-//  
-//
-//  Created by Emily Chao on 3/1/17.
-//
-//
+/*
+ * Item.h
+ *
+ *  Created on: March 1, 2017
+ *      header file for usable item classes (Item, Weapon, Bag, Potion, Gold, Key)
+ *
+ *  Emily Chao
+ */
 
 #ifndef item_h
 #define item_h

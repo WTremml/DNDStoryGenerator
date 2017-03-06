@@ -1,4 +1,16 @@
-// iostream is for testing, nncurses is for actual display
+/*
+ * Wolrd.h
+ *
+ *  Created on: Feb 24, 2017
+ *      header file for generating the entire world dyamically
+ *		
+ *  Will Tremml
+ */
+
+
+
+
+// iostream is for testing, ncurses is for actual display
 //Do NOT use both sets of commands at the same time
 #ifndef WORLD_H
 #define WORLD_H
@@ -10,6 +22,7 @@
 
 //for random number geerator
 #include <cstdlib>
+#include <math.h>
 #include <ctime>
 
 
@@ -23,24 +36,23 @@
 //map dimensions
 #define MAP_WIDTH 20
 #define MAP_HEIGHT 20
-#define MAP_LEVELS 3
+#define MAP_LEVELS 1
 
 
 // Tile types
 #define TILE_ROCKFLOOR		0
 #define TILE_WALL			1
-#define TILE_CLOSEDDOOR		2
+#define TILE_LOCKEDDOOR		2
 #define TILE_OPENDOOR		3
 #define TILE_CORRIDOR		4
 #define TILE_TREE			5
-#define TILE_LOCKEDDOOR		6
 
 // Item Types
-#define ITEM_NONE			0
-#define ITEM_POTION			1
-#define ITEM_GOLD			2
-#define ITEM_KEY			3
-#define ITEM_Weapon 		4
+#define ITEM_NONE			6
+#define ITEM_POTION			7
+#define ITEM_GOLD			8
+#define ITEM_KEY			9
+#define ITEM_Weapon 		10
 
 
 //////////////////////////////////////
@@ -72,19 +84,19 @@ struct Tile_Type {
 
 Tile_Type TileIndex[] = {
 	{' ', COLOR_WHITE, true},		//Rockfloor 	(0)
-	{'#', COLOR_BLACK, true},		//Wall 			(1)
-	{'+', COLOR_BLUE, false},		//Closed Door 	(2)
+	{'#', COLOR_BLACK, false},		//Wall 			(1)
+	{'+', COLOR_BLUE, false},		//Locked Door 	(2)
 	{'/', COLOR_BLUE, true},		//Open Door 	(3)
 	{'#', COLOR_RED, true},			//Corridor 		(4)
 	{'T', COLOR_GREEN, false},		//Tree 			(5)
 };
 
 Item_Type ItemIndex[] = {
-	{' ', 		COLOR_WHITE, 	"Empty"},		//None 		 	(0)
-	{(char)173, COLOR_CYAN, 	"Potion"},		//Potion 		(1)
-	{(char)169, COLOR_YELLOW, 	"Gold"},	    //Gold 		 	(2)
-	{(char)170, COLOR_BLACK,    "Key"},			//key 		 	(3)
-	{(char)159, COLOR_RED, 		"Weapon"},		//weapon 		(4)
+	{' '	, COLOR_WHITE, 	"Empty"},		//None 		 	(0)
+	{'!'	, COLOR_CYAN, 	"Potion"},		//Potion 		(1)
+	{'$'	, COLOR_YELLOW, "Gold"},	    //Gold 		 	(2)
+	{'='	, COLOR_BLACK,  "Key"},			//key 		 	(3)
+	{'S'	, COLOR_RED, 	"Weapon"},		//weapon 		(4)
 };
 
 
@@ -96,12 +108,22 @@ class Room {
 	// X1 is always < X2
 	// Y1 is always < Y2
 	int location[5];
+	int N_Doors;
+	int D_xy[6];
+	int center[2];
 
   public:
+
   	//initialized to -1 just in case
 	Room();
 	//Makes a room with given vertices
 	Room(int* arr);
+
+	//copy constructor
+	Room(const Room& old);
+
+	// changes door information on rooms 
+	void changeDoors(int num, int* arr);
 
 	//changes vertices
 	void changeRoom(int x1, int x2, int y1, int y2, int z);
@@ -109,6 +131,7 @@ class Room {
 	//produces a new pointer
 	//must remember to delete
 	int* getLoc();
+	int getCenter(int n);
 
 	// for testing, prints vertices
 	void printLoc();
@@ -118,6 +141,9 @@ class Room {
 
 	// returns true if it is inside
 	bool inside(int x, int y, int z);
+
+	// returns distance between centers of rooms
+	int distance(Room A);
 
 };
 
@@ -130,8 +156,9 @@ class World{
 
 	// Main storage array
 	int*** MapArray;
+	Room** Room_List;
 
-public:
+  public:
 	//constructor
 	World();
 	//destructor
@@ -141,11 +168,50 @@ public:
 	void GenerateMap( void );
 	//takes Room coordinates and puts them on the map
 	void makeRoom(Room A);
+	// generates doors for rooms
+	void generateDoors(Room A);
+	// makes corridors
+	void generatePaths();
+	// makes items
+	void generateItems(Room A);
+
+
 	//based on tile type, if a person can walk through it. Mostly used for corridors
 	bool IsPassable( int x, int y, int z );
 	// prints map to screen for testing using std::cout, not for the final version
 	void printMap();
 
+};
+
+
+class SparseMat{
+  private:
+    bool* arr;
+
+    int size;
+    int M;
+
+  public:
+    //constructor
+     SparseMat();
+    //destructor
+     ~SparseMat();
+    //copy constructor
+    SparseMat(const SparseMat& old);
+
+    // Simple return-by-value for class variables
+    // length is the number of array elements
+    int length(){return(size);} 
+    int NxN(){return(M);}
+
+    //Priting loop for efficiency
+    void printMat();
+
+    //overloading getInd for strings or indices
+    bool getInd(int row, int col);
+
+    //function to change an value for strings and index
+    void changeInd(int row, int col, bool value);
 };
 
 

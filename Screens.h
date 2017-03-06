@@ -1,3 +1,11 @@
+/*
+ * Screens.h
+ *
+ *  Created on: March 3, 2017
+ *      header file for printing variaous screens to the terminal via NCURSES.h
+ *
+ *  Will Tremml
+ */
 
 #ifndef SCREENS_H
 #define SCREENS_H
@@ -69,3 +77,7 @@ Intro(){
 }
 
 #endif
+
+
+
+

@@ -1,10 +1,11 @@
-//
-//  magic.h
-//  
-//
-//  Created by Emily Chao on 3/1/17.
-//
-//
+/*
+ * Magic.h
+ *
+ *  Created on: March 1, 2017
+ *      header file for magic class
+ *
+ *  Emily Chao
+ */
 
 #ifndef magic_h
 #define magic_h
