@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <math.h>
 #include <ctime>
+#include "linked.h"
 
 
 #define MAX_PLAYERS 20
@@ -36,7 +37,7 @@
 //map dimensions
 #define MAP_WIDTH 20
 #define MAP_HEIGHT 20
-#define MAP_LEVELS 2
+#define MAP_LEVELS 1
 
 
 // Tile types
@@ -45,7 +46,7 @@
 #define TILE_LOCKEDDOOR		2
 #define TILE_OPENDOOR		3
 #define TILE_CORRIDOR		4
-#define TILE_TREE			5
+#define TILE_FINISHED		5
 
 // Item Types
 #define ITEM_NONE			6
@@ -67,6 +68,7 @@ g++ -o World World.cpp -lncurses
 
 //////////////////////////////////////
 
+//these are in World.h as prototypes
 struct Item_Type{
   char dispCharacter;
   int color;
@@ -81,8 +83,15 @@ struct Tile_Type {
 
 };
 
+//the actual structs are defines in main.cpp
 extern Tile_Type TileIndex[];
 extern Item_Type ItemIndex[];
+
+extern list *node;
+extern list *first;
+extern list *last;
+extern list *node1;
+extern list *node2;
 
 
 class Room {
@@ -92,8 +101,14 @@ class Room {
 	// X1 is always < X2
 	// Y1 is always < Y2
 	int location[5];
+
+	//number of doors
 	int num;
+
+	//location of doors int[6]
 	int* D_xy;
+
+	//approximate center
 	int center[2];
 
   public:
@@ -102,10 +117,10 @@ class Room {
 	Room();
 	//Makes a room with given vertices
 	Room(int* arr);
-
 	//copy constructor
 	Room(const Room& old);
 
+	//simple get command
 	int getD_num(){ return(num); }
 
 	// changes door information on rooms 
@@ -117,6 +132,20 @@ class Room {
 	//produces a new pointer
 	//must remember to delete
 	int* getLoc();
+
+	//produces a new pointer
+	//must remember to delete
+	int* getDoors(){
+		int i;
+		int* arr = new int[6];
+
+		for(i=0;i<6;i++){ arr[i]=D_xy[i];}
+		return(arr);
+	}
+
+	//only gets the 'x' or 'y' value
+	// 0-> X , 1-> Y
+	// anything else will throw
 	int getCenter(int n);
 
 	// for testing, prints vertices
@@ -130,6 +159,9 @@ class Room {
 
 	// returns distance between centers of rooms
 	int distance(Room A);
+
+	//put in coordinates
+	float distance(int x, int y);
 
 };
 
@@ -173,12 +205,12 @@ class World{
 
 	// Main storage array
 	int*** MapArray;
+	// Room storage array
 	Room** Room_List;
+	// Boolean Array of if rooms are connected
 	SparseMat R_Connections[MAP_LEVELS];
 
   public:
-  	int buffer;  	
-
 	//constructor
 	World();
 	//destructor
@@ -196,14 +228,34 @@ class World{
 	void generateItems(Room A);
 
 
+	int* getStart(){
+		int i = rand()%ROOM_ITER;
+		int* arr;
+
+		arr = new int[2];
+		arr[0] = Room_List[0][i].getCenter(0);
+		arr[1] = Room_List[0][i].getCenter(1);
+
+		return(arr);
+
+	}
+	//returns the map values
+	int getMapVal(int x, int y, int z){return(MapArray[x][y][z]);}
+	//changes mapval and returns what was previously there
+	int changeMapVal(int x, int y, int z, int Input){
+		int temp = MapArray[x][y][z];
+		MapArray[x][y][z] = Input;
+		return(temp);
+	}
 	//based on tile type, if a person can walk through it. Mostly used for corridors
 	bool IsPassable( int x, int y, int z );
 	// prints map to screen for testing using std::cout, not for the final version
 	void printMap();
 
+	// prints map to screen using NCURSES 
+	void printMap(int row, int col, int level);
+
+
 };
-
-
-
 #endif
 
