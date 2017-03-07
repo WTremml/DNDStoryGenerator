@@ -28,7 +28,7 @@ CFLAGS = -Wall -g
 LIBS = -lncurses
 
 # define the C source files
-SRCS = World.cpp magic.cpp item.cpp character.cpp Game.cpp
+SRCS = World.cpp magic.cpp item.cpp character.cpp Game.cpp Linked.cpp
 
 
 # define the C object files 
