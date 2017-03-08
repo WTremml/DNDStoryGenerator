@@ -112,6 +112,7 @@ char* Name(int row, int col){
 int Magic(int row, int col){
 	int i;
 	int ch = 0;
+    char welcome[] = "Welcome traveler. You seem to be a bit lost?";
 
 	char wiz[26][40] = { "   ",
 	"     ",

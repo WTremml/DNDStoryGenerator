@@ -65,7 +65,26 @@ public:
     void fight(Monster m);  //fight other monsters
     void foundMonster(Monster m);   //found another monster
 };
-
+///////////////////////////////////////////////////////////////////
+class Dummy: public Character {
+private:
+    Bag bag1;           //bag class contains gold, potions, keys
+    int gift;           //each dummy can either give weapon or armor enhancements
+                            //0-weapon 1-armor
+    int cooperative;    //how cooperative the Dummy is
+    int goldC;          //how much gold Dummy has
+public:
+    Dummy();               //default constructor
+    Dummy(int gift1, int x, int y, int z);
+    Dummy(Dummy& old);     //copy constructor
+    ~Dummy() {}                 //destructor
+    
+    Bag getBag();               //return copy of bag
+    
+    int getGold();              //getter for gold pieces
+    int getCoop();              //getter for cooperative characteristic
+    int getGift();              //getter for type of gift
+};
 ///////////////////////////////////////////////////////////////////
 class Person: public Character {
 private:
@@ -74,6 +93,7 @@ private:
     
     Weapon w;           //each character starts with basic weapon
     Magic m;            //each character starts with basic magic skill
+    double armor;       //each character starts with basic armor
     
 public:
     Person();               //default constructor
@@ -85,18 +105,21 @@ public:
     Bag getBag();               //return copy of bag
     
     bool found(int x, int y, int z);    //returns true if item 'found'
-    void foundMonster(Monster m);   //if encounter monster
-    void foundCharacter();          //if find another character
+    void foundMonster(Monster m);       //if encounter monster
+    void foundCharacter(Dummy d);       //if find another character
     void foundPotion(Potion p);             //if find potion
-    void foundKey(Key k);                //if find key
-    void foundGold(Gold g);               //if find gold
+    void foundKey(Key k);                   //if find key
+    void foundGold(Gold g);                 //if find gold
     void useKey();             //use key
     void usePotion();          //use potion
     void useGold(int g);       //use gold
     
     void fight(Monster m);      //fight monster
+    void fight1(Dummy d);       //fight dummy
     void run(Monster m);        //run from monster
+    void upLevel();             //move up level if have key
 
 };
+
 
 #endif

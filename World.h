@@ -31,7 +31,7 @@
 #define MAX_ROOM_SIZE 8
 // Minimum room size is 3
 
-//number of rooms on each floor. Could be changed to random in the future/
+//number of rooms on each floor. Could be changed to random in the future
 #define ROOM_ITER 6
 
 //map dimensions
@@ -54,6 +54,14 @@
 #define ITEM_GOLD			8
 #define ITEM_KEY			9
 #define ITEM_Weapon 		10
+
+// Character Types
+#define CHAR_None   		11
+#define CHAR_BMONSTER		12
+#define CHAR_SMONSTER		13
+#define CHAR_DUMMY   		14
+#define CHAR_USER   		15
+
 
 
 //////////////////////////////////////
@@ -80,12 +88,19 @@ struct Tile_Type {
   char dispCharacter;
   int dispColor;
   bool Passable;
-
+};
+struct Char_Type {
+    
+  char dispCharacter;
+  int color;
+  std::string name;
+  bool Passable;
 };
 
-//the actual structs are defines in main.cpp
+//the actual structs are defines in Game.cpp
 extern Tile_Type TileIndex[];
 extern Item_Type ItemIndex[];
+extern Char_Type CharIndex[];
 
 extern list *node;
 extern list *first;
@@ -123,7 +138,7 @@ class Room {
 	//simple get command
 	int getD_num(){ return(num); }
 
-	// changes door information on rooms 
+	//changes door information on rooms
 	void changeDoors(int _num, int* arr);
 
 	//changes vertices
@@ -226,7 +241,8 @@ class World{
 	void generatePaths();
 	// makes items
 	void generateItems(Room A);
-
+    // makes characters
+    void generateCharacters(Room A);
 
 	int* getStart(){
 		int i = rand()%ROOM_ITER;
