@@ -1,5 +1,5 @@
  /*
- * Wolrd.h
+ * World.h
  *
  *  Created on: Feb 24, 2017
  *      header file for generating the entire world dyamically
@@ -602,6 +602,28 @@ void World::generateItems(Room A){
 	//cleaning temporary storage
 	delete[] arr;
 }
+//randomly puts characters in rooms, does not matter the room size
+void World::generateCharacters(Room A){
+    int* arr = A.getLoc();
+    
+    int x,y,i;
+    int N_chars = (rand()%3);
+    
+    for(i=0;i<N_chars;i++){
+        //generating random location in the room
+        x = (rand()%(arr[1]-arr[0]-1))+arr[0]+1;
+        y = (rand()%(arr[3]-arr[2]-1))+arr[2]+1;
+        
+        //characters are numbered 11-15
+        //items can only be placed on empty floor space
+        if(MapArray[x][y][arr[4]]==0) {
+            MapArray[x][y][arr[4]]=(rand()%5)+11;
+        }
+    }
+    
+    //cleaning temporary storage
+    delete[] arr;
+}
 
 //generates a boolean matrix of which rooms are connected
 void World::generatePaths(){
@@ -835,7 +857,12 @@ bool World::IsPassable( int x, int y, int z )
 	int TileValue = MapArray[x][y][z];
 
 	// Return true if it's passable
-	return TileIndex[TileValue].Passable;
+    if(TileValue<6){
+        return TileIndex[TileValue].Passable;
+    }else{
+        return(true);
+    }
+	
 }
 
 //prints the map with the std::cout in terminal
@@ -893,7 +920,7 @@ void World::printMap(int row, int col, int level){
 			}else{
 				attron(COLOR_PAIR(2));
 				printw("%c ", ItemIndex[ MapArray[i][j][k] -6 ].dispCharacter );
-				attroff(COLOR_PAIR(1));
+				attroff(COLOR_PAIR(2));
 			}
 			
 		}
