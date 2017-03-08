@@ -1,5 +1,5 @@
 /*
- * Wolrd.h
+ * World.h
  *
  *  Created on: Feb 24, 2017
  *      header file for generating the entire world dyamically
@@ -20,11 +20,14 @@
 #include <ncurses.h>
 #include <string>
 
-//for random number geerator
+//for random number generator
 #include <cstdlib>
 #include <math.h>
 #include <ctime>
 #include "linked.h"
+
+#include "item.h"
+#include "character.h"
 
 
 #define MAX_PLAYERS 20
@@ -38,6 +41,7 @@
 #define MAP_WIDTH 20
 #define MAP_HEIGHT 20
 #define MAP_LEVELS 1
+    //really map is 20 rows and 40 columns because of spaces between the columns
 
 
 // Tile types
@@ -94,7 +98,6 @@ struct Char_Type {
   char dispCharacter;
   int color;
   std::string name;
-  bool Passable;
 };
 
 //the actual structs are defines in Game.cpp
@@ -224,7 +227,31 @@ class World{
 	Room** Room_List;
 	// Boolean Array of if rooms are connected
 	SparseMat R_Connections[MAP_LEVELS];
-
+    
+    // Potion array
+    Potion potions[30];
+    int pArray;
+    // Gold array
+    Gold golds[30];
+    int gArray;
+    // Key array
+    Key keys[30];
+    int kArray;
+    // Weapon array
+    Weapon weapons[30];
+    int wArray;
+    
+    // Monster array
+    Monster monsters[40];
+    int mArray;
+    // Dummy array
+    Dummy dummies[30];
+    int dArray;
+    
+    //Screen dimensions
+    int rows;
+    int cols;
+    
   public:
 	//constructor
 	World();
@@ -243,7 +270,13 @@ class World{
 	void generateItems(Room A);
     // makes characters
     void generateCharacters(Room A);
-
+    
+    //sets screen dimensions
+    void setScreen(int r, int c) {
+        rows=r;
+        cols=c;
+    }
+    
 	int* getStart(){
 		int i = rand()%ROOM_ITER;
 		int* arr;
@@ -269,7 +302,8 @@ class World{
 	void printMap();
 
 	// prints map to screen using NCURSES 
-	void printMap(int row, int col, int level);
+	void printMap(int row, int col, int level, int x, int y);
+        //int x and int y are the x and y and z of the user's location
 
 
 };

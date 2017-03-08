@@ -110,6 +110,7 @@ public:
     void foundPotion(Potion p);             //if find potion
     void foundKey(Key k);                   //if find key
     void foundGold(Gold g);                 //if find gold
+    void foundWEnhance(Weapon w);           //if find weapon enhancement
     void useKey();             //use key
     void usePotion();          //use potion
     void useGold(int g);       //use gold

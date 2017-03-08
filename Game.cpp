@@ -19,6 +19,7 @@ using namespace std;
 #include "item.h"
 #include "linked.h"
 
+
 Tile_Type TileIndex[] = {
   {' ', COLOR_WHITE, true},   //Rockfloor   (0)
   {'#', COLOR_BLACK, false},  //Wall        (1)
@@ -32,16 +33,17 @@ Item_Type ItemIndex[] = {
   {' '  , COLOR_WHITE, "Empty"},    //None      (0)
   {'!'  , COLOR_CYAN,   "Potion"},  //Potion    (1)
   {'$'  , COLOR_YELLOW, "Gold"},    //Gold      (2)
-  {'='  , COLOR_BLACK,  "Key"},     //key       (3)
+  {'='  , COLOR_BLACK,  "Key"},     //Key       (3)
   {'S'  , COLOR_RED,  "Weapon"},    //Weapon    (4)
 };
 
 Char_Type CharIndex[] = {
-    {' '  , COLOR_BLACK,  "Empty",  true},    //None         (0)
-    {'M'  , COLOR_BLACK,  "BMonster", false}, //Big Monster  (1)
-    {'m'  , COLOR_BLACK,  "SMonster", false}, //Small Monster(2)
-    {'D'  , COLOR_BLACK, "Dummy", false},     //Dummy        (3)
-    {'O'  , COLOR_BLACK, "User", false},      //Person       (4)
+    //Monster is included twice so that there will be 2x as many monsters as dummies
+    {' '  , COLOR_BLACK,  "Empty"},    //None         (0)
+    {'M'  , COLOR_BLACK,  "Monster1"}, //1 Monster    (1)
+    {'M'  , COLOR_BLACK,  "Monster2"}, //2 Monster    (2)
+    {'D'  , COLOR_BLACK, "Dummy"},     //Dummy        (3)
+    {'O'  , COLOR_BLACK, "User"},      //Person       (4)
 };
 
 
@@ -50,6 +52,9 @@ list *first = NULL;
 list *last = NULL;
 list *node1 = NULL;
 list *node2 = NULL;
+
+
+
 
 int main() {
 	srand(time(NULL));
@@ -72,14 +77,18 @@ int main() {
     init_pair(1, COLOR_RED, COLOR_BLACK);
     init_pair(2, COLOR_GREEN, COLOR_BLACK);
     init_pair(3, COLOR_CYAN, COLOR_BLACK);
+    init_pair(4, COLOR_YELLOW, COLOR_BLACK);
+    init_pair(5, COLOR_BLUE, COLOR_BLACK);
 
-    getmaxyx(stdscr,row,col); // get the number of rows and columns 
+
+    getmaxyx(stdscr,row,col); // get the number of rows and columns
 
     //getting name and starting location
     Intro(row, col);
     name = Name(row, col);
     std::string UserName(name);
-    delete[] name; 
+    delete[] name;
+    
     //must happen after the world is generated
     start = game.getStart();
 
@@ -87,44 +96,41 @@ int main() {
     mag = Magic(row, col);
 
     //creating character
-    Person User(UserName, mag, start[0], start[1], 0);
+    //Person User(UserName, mag, start[0], start[1], 0);
+    Person User(UserName, mag, 0,0,0);
     delete[] start;
 
-    game.printMap(row,col,0);
+    game.printMap(row,col,0, User.getXLoc(), User.getYLoc());
+    
     keypad(stdscr, TRUE);     // Initializing keypad
     noecho();                 // No echo only after keypad
 
 
-    
     while((ch=getch())!= 'q'){
         switch(ch){
             case KEY_UP: direction= 2; 
-                mvprintw(row/2,(col-24)/2,"The up key was pressed");
-                if (game.IsPassable(User.getXLoc(), User.getYLoc()+1, User.getZLoc())) {
-                    User.moveUp();
+                if (game.IsPassable(User.getXLoc()-1, User.getYLoc(), User.getZLoc())) {
+                    User.moveLeft(); //goes up
                 }
                 break;
             case KEY_DOWN: direction= 3;
-                mvprintw(row/2,(col-24)/2,"The down key was pressed");
-                if (game.IsPassable(User.getXLoc(), User.getYLoc()-1, User.getZLoc())) {
-                    User.moveDown();
+                if (game.IsPassable(User.getXLoc()+1, User.getYLoc(), User.getZLoc())) {
+                    User.moveRight(); //goes down
                 }
                 break;
             case KEY_RIGHT: direction= 1;
-                mvprintw(row/2,(col-24)/2,"The right key was pressed");
-                if (game.IsPassable(User.getXLoc()+1, User.getYLoc(), User.getZLoc())) {
-                    User.moveRight();
+                if (game.IsPassable(User.getXLoc(), User.getYLoc()+1, User.getZLoc())) {
+                    User.moveUp(); //goes right
                 }
                 break;
             case KEY_LEFT: direction= 0;
-                mvprintw(row/2,(col-24)/2,"The left key was pressed");
-                if (game.IsPassable(User.getXLoc()-1, User.getYLoc(), User.getZLoc())) {
-                    User.moveRight();
+                if (game.IsPassable(User.getXLoc(), User.getYLoc()-1, User.getZLoc())) {
+                    User.moveDown(); //goes left
                 }
                 break;
         }
-        game.printMap(row,col,0);
-        
+        game.printMap(row,col,0,User.getXLoc(), User.getYLoc());
+
         //print out health to bottom of screen
         mvprintw(row-8,10,"Health: %d", User.getHealth());
         //print out bag to bottom of screen
@@ -132,13 +138,7 @@ int main() {
 
     }
     
-    endwin(); 
-    
-    /*
-    cout << user.getXLoc();
-    user.moveRight();
-    cout << user.getXLoc();
-`	*/
+    endwin();
     
     return 0;
 }

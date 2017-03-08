@@ -94,6 +94,10 @@ Monster::Monster(Monster& old) {    //copy constructor
     type=old.type;
     aggressive=old.aggressive;
     wandering=old.wandering;
+    health=old.health;
+    xLocation=old.xLocation;
+    yLocation=old.yLocation;
+    zLocation=old.zLocation;
 }
 int Monster::getType() {            //get type of monster
     return type;
@@ -164,6 +168,10 @@ Dummy::Dummy(Dummy& old) {   //copy constructor
     cooperative=old.cooperative;
     gift=old.gift;
     goldC=old.goldC;
+    health=old.health;
+    xLocation=old.xLocation;
+    yLocation=old.yLocation;
+    zLocation=old.zLocation;
 }
 Bag Dummy::getBag() {              //return copy of bag
     Bag bag2;
@@ -199,6 +207,10 @@ Person::Person(Person& old) {   //copy constructor
     w=old.w;
     m=old.m;
     armor=old.armor;
+    health=old.health;
+    xLocation=old.xLocation;
+    yLocation=old.yLocation;
+    zLocation=old.zLocation;
 }
 void Person::healed() {             //increment health if healed
     health+=50;
@@ -215,19 +227,21 @@ void Person::useGold(int g) {       //use gold
 }
 void Person::foundMonster(Monster mon) {        //if encounter monster
     int choice;
-    //will they fight or not?
-    cout << "Do you want to fight or run? 1-Fight 2-Run" << endl;
-    cin >> choice;
-    
-    if (choice==1) {        //if fight
-        fight(mon);
-    }
-    else if (choice==2) {   //if run
-        run(mon);
-    }
-    else {
-        cout << "Invalid entry. You must fight." << endl;
-        fight(mon);
+    if(found(mon.getXLoc(), mon.getYLoc(), mon.getZLoc())) {         //if found
+        //will they fight or not?
+        cout << "Do you want to fight or run? 1-Fight 2-Run" << endl;
+        cin >> choice;
+        
+        if (choice==1) {        //if fight
+            fight(mon);
+        }
+        else if (choice==2) {   //if run
+            run(mon);
+        }
+        else {
+            cout << "Invalid entry. You must fight." << endl;
+            fight(mon);
+        }
     }
 }
 bool Person::found(int x, int y, int z) {    //returns true if item 'found'
@@ -301,6 +315,13 @@ void Person::foundGold(Gold g) {                       //if find gold
     if (found(g.getX(), g.getY(), g.getZ())) {         //if found
         bag1.findGold();
         g.setLoc(-1, -1, -1);           //remove gold from screen
+    }
+}
+void Person::foundWEnhance(Weapon w) {
+    //found weapon
+    if (found(w.getX(), w.getY(), w.getZ())) {         //if found
+        w.enhance();
+        w.setLoc(-1, -1, -1);           //remove weapon from screen
     }
 }
 Bag Person::getBag() {                  //return copy of bag
