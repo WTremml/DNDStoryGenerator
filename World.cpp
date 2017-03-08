@@ -119,7 +119,7 @@ Room::Room(const Room& old){
 //returns the center integer
 // 0 for X
 // 1 for Y
-// Sepaaration is useful in some situations
+// Separation is useful in some situations
 int Room::getCenter(int n){
 		//checks that input is good
 		if(n==0 || n ==1){
@@ -327,6 +327,14 @@ World::World(){
 			}
 		}
 	}
+    rows=0;
+    cols=0;
+    pArray=0;
+    gArray=0;
+    kArray=0;
+    wArray=0;
+    mArray=0;
+    dArray=0;
 }
 
 //destructor
@@ -432,6 +440,8 @@ void World::GenerateMap( void ){
 		for(i=0;i<iter;i++){
 			//items are generated floor by floor, room by room.
 			generateItems( Room_List[j][i] );
+            //characters are generated floor by floor, room by room.
+            generateCharacters( Room_List[j][i] );
 
 		}	
 	// end of for loop that goes through floors
@@ -440,7 +450,7 @@ void World::GenerateMap( void ){
 	//Doors function must come before path function
 	//outside of floor loop because they cycle through the entire map on their own
 	generateDoors( );
-	generatePaths();
+	//generatePaths();
 }
 
 //takes vertices of room and draws it on the map array
@@ -583,7 +593,7 @@ void World::generateDoors(){
 //randomly puts items in rooms, does not matter the room size
 void World::generateItems(Room A){
 	int* arr = A.getLoc();
-
+    int item;
 	int x,y,i;
 	int N_items = (rand()%3);
 
@@ -595,7 +605,43 @@ void World::generateItems(Room A){
 		//items are numbered 6-10
 		//items can only be placed on empty floor space
 		if(MapArray[x][y][arr[4]]==0) {
-			MapArray[x][y][arr[4]]=(rand()%5)+6;
+            item=(rand()%5)+6;
+			MapArray[x][y][arr[4]]=item;
+            
+            //add item to array of type
+            if (item==7) {
+                //if potion
+                Potion p;
+                p.setLoc(x, y, arr[4]);
+                //add new potion to array
+                potions[pArray]=p;
+                pArray++;
+            }
+            else if (item==8) {
+                //if gold
+                Gold g;
+                g.setLoc(x, y, arr[4]);
+                //add new gold to array
+                golds[gArray]=g;
+                gArray++;
+            }
+            else if (item==9) {
+                //if key
+                Key k;
+                k.setLoc(x, y, arr[4]);
+                //add new key to array
+                keys[kArray]=k;
+                kArray++;
+            }
+            else if (item==10) {
+                //if weapon enhancer
+                Weapon w;
+                w.setLoc(x, y, arr[4]);
+                //add new gold to array
+                weapons[wArray]=w;
+                wArray++;
+
+            }
 		}
 	}
 	
@@ -606,18 +652,37 @@ void World::generateItems(Room A){
 void World::generateCharacters(Room A){
     int* arr = A.getLoc();
     
-    int x,y,i;
-    int N_chars = (rand()%3);
+    int x,y,i, player;
+    int N_chars = (rand()%3)+1;
     
     for(i=0;i<N_chars;i++){
         //generating random location in the room
         x = (rand()%(arr[1]-arr[0]-1))+arr[0]+1;
         y = (rand()%(arr[3]-arr[2]-1))+arr[2]+1;
         
-        //characters are numbered 11-15
+        //characters are numbered 11-14 (user is 15)
         //items can only be placed on empty floor space
         if(MapArray[x][y][arr[4]]==0) {
-            MapArray[x][y][arr[4]]=(rand()%5)+11;
+            player=(rand()%4)+11;
+            MapArray[x][y][arr[4]]=player;
+            
+            //add char to array of type
+            if (player==12 || player==13) {
+                //if monster
+                Monster m;
+                m.setLoc(x, y, arr[4]);
+                //add new monster to array
+                monsters[mArray]=m;
+                mArray++;
+            }
+            else if (player==14) {
+                //if dummy
+                Dummy d;
+                d.setLoc(x, y, arr[4]);
+                //add new dummy to array
+                dummies[dArray]=d;
+                dArray++;
+            }
         }
     }
     
@@ -849,9 +914,10 @@ void World::generatePaths(){
 //decides if the character can walk on that tile or not
 bool World::IsPassable( int x, int y, int z )
 {
-	// Before we do anything, make sure that the coordinates are valid
-	if( x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT )
-		return false;
+    // Before we do anything, make sure that the coordinates are valid
+    if( x < 0 || x >= MAP_WIDTH || y < 0 || y >= 2*MAP_HEIGHT )
+        return false;
+    
 
 	// Store the value of the tile specified
 	int TileValue = MapArray[x][y][z];
@@ -862,7 +928,6 @@ bool World::IsPassable( int x, int y, int z )
     }else{
         return(true);
     }
-	
 }
 
 //prints the map with the std::cout in terminal
@@ -893,39 +958,76 @@ void World::printMap(){
 }
 
 //prints the map with the NCURSES
-void World::printMap(int row, int col, int level){
+void World::printMap(int row, int col, int level, int x, int y){
+    //x and y give the user location at the current time
+    
 	int i, j ,k;
+    int mapX, mapY; //x and y origins of map in real pixels (equivalent to 0,0 in map pixels)
 
 	if(level<0 || level>=MAP_LEVELS){
 		throw;
 	}
 	k=level;
-
+    
+    mapX=(row-MAP_WIDTH)/2;
+    mapY=(col-3*MAP_HEIGHT)/2;
+    
+    //draw walls around outside of map (at x=-1, x=41, y=-1, y=21)
+    move(mapX-1,mapY-1);
+    //top wall
+    for (i=0; i<MAP_WIDTH+2; i++) {
+        printw("%c ", TileIndex[ 1 ].dispCharacter  );
+    }
+    //left side wall
+    for (i=0; i<MAP_HEIGHT+1; i++) {
+        move(mapX + i, mapY - 1);
+        printw("%c ", TileIndex[ 1 ].dispCharacter  );
+    }
+    //bottom wall
+    move(mapX + MAP_HEIGHT, mapY -1 );
+    for (i=0; i<MAP_WIDTH+2; i++) {
+        printw("%c ", TileIndex[ 1 ].dispCharacter  );
+    }
+    //right side wall
+    for (i=0; i<MAP_HEIGHT+1; i++) {
+        move(mapX + i, mapY + 2*MAP_WIDTH+1);
+        printw("%c ", TileIndex[ 1 ].dispCharacter  );
+    }
+    
+    //draw items and characters onto map
 	for(j=0;j<MAP_HEIGHT;j++){
 		move((row-MAP_WIDTH)/2 + j, (col-3*MAP_HEIGHT)/2);
 		for(i=0;i<MAP_WIDTH;i++){
 			if(MapArray[i][j][k]<2){
 				printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter  );
-
 			}else if(MapArray[i][j][k]<4){
 				attron(COLOR_PAIR(3));
 				printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
 				attroff(COLOR_PAIR(3));
-
 			}else if(MapArray[i][j][k]<6){
 				attron(COLOR_PAIR(1));
 				printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
 				attroff(COLOR_PAIR(1));
-
-			}else{
+			}else if (MapArray[i][j][k]<11){
 				attron(COLOR_PAIR(2));
 				printw("%c ", ItemIndex[ MapArray[i][j][k] -6 ].dispCharacter );
 				attroff(COLOR_PAIR(2));
-			}
-			
+            }else if (MapArray[i][j][k]<15){
+                attron(COLOR_PAIR(4));
+                printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );
+                attroff(COLOR_PAIR(4));
+            }
 		}
 	}
+    //draw user onto map
+    //0,0 of map is (row-MAP_WIDTH)/2, (col-3*MAP_HEIGHT)/2
+    move(mapX +x, mapY +y);
 
+    attron(COLOR_PAIR(5));
+    MapArray[x][y][k]=15;
+    printw("%c", CharIndex[ 4 ].dispCharacter );
+    attroff(COLOR_PAIR(5));
+    
 	refresh();
   	getch();
   	erase();
