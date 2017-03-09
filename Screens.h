@@ -116,7 +116,7 @@ int Magic(int row, int col){
 
 	char wiz[26][40] = { "   ",
 	"     ",
-	"	  	          _,._         ",
+	"	  	        _,._         ",
 	"	  .||,       /_ _\\\\        ",
 	"	 \\.`',/      |'L'| |       ",
 	"	 = ,. =      | -,| L       ",
@@ -199,13 +199,13 @@ int Magic(int row, int col){
 
 
   	for(i=0;i<26;i++){
-		mvprintw((row-26)/2+i,(col-45)/7,"%s",wiz[i]);
+		mvprintw((row-26)/2+i,(col-45)/5,"%s",wiz[i]);
 	}
 	for(i=0;i<26;i++){
-	    mvprintw((row-26)/2+i,(col-45)/3,"%s",mini[i]);
+	    mvprintw((row-26)/2+i,(col-45)/1.5,"%s",mini[i]);
 	}
 	for(i=0;i<24;i++){
-	    mvprintw((row-24)/2+i+1,5*(col-45)/5,"%s",elf[i]);
+	    mvprintw((row-24)/2+i+1,(col-45),"%s",elf[i]);
 	}
 
 	mvprintw((row-26)/2 + 28,(col-45)/2,"%s",mag1);

@@ -60,6 +60,7 @@ int main() {
 	srand(time(NULL));
 
     int ch= 0;                // input buffer
+    int buffer = 0;
     int direction, mag, flag, won;
     int* start;               // random start location
     char* name;         // name of character
@@ -91,20 +92,26 @@ int main() {
     delete[] name;
     
     //must happen after the world is generated
-    start = game.getStart();
+    start = game.getStart(0);
+
+    //storing whatever was under the character
+    //buffer = game.getMapVal(start[0],start[1],0)
+    //actaully we'll just replace whatever was under the character with 0
+    game.changeMapVal(start[0],start[1],0,15);
+
+
 
     //getting magic
+    noecho();                 // Does not show characters
     mag = Magic(row, col);
 
     //creating character
     //Person User(UserName, mag, start[0], start[1], 0);
-    Person User(UserName, mag, 0,0,0);
-    delete[] start;
+    Person User(UserName, mag, start[0],start[1],0);
     
     game.printMap(row,col,level, User);
     
     keypad(stdscr, TRUE);     // Initializing keypad
-    noecho();                 // No echo only after keypad
     
     won=0;
     
@@ -115,46 +122,98 @@ int main() {
     User.foundKey(k2);
     
 
-    while(level<=3 && won==0 && (ch=getch())!= 'q'){
+    while(level<=MAP_LEVELS && won==0 && (ch=getch())!= 'q'){
         switch(ch){
             //User movement on screen
             case KEY_UP: direction= 2; 
-                if (game.IsPassable(User.getXLoc()-1, User.getYLoc(), User.getZLoc())) {
-                    User.moveLeft(); //goes up
+                if (game.IsPassable(User.getXLoc(), User.getYLoc()-1, User.getZLoc())) {
+                    //changing map back to previous tile
+                    game.changeMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc(), buffer);
+
+                    User.moveUp(); 
+                    //storeing buffer for where character is moving
+                    buffer = game.getMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc());
+                    //moving character onto location and puts map value of 15
+                    game.changeMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc(), 15);
+                    
                 }
                 break;
             case KEY_DOWN: direction= 3;
-                if (game.IsPassable(User.getXLoc()+1, User.getYLoc(), User.getZLoc())) {
-                    User.moveRight(); //goes down
+                if (game.IsPassable(User.getXLoc(), User.getYLoc()+1, User.getZLoc())) {
+                    //changing map back to previous tile
+                    game.changeMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc(), buffer);
+
+                    User.moveDown(); 
+                    //storeing buffer for where character is moving
+                    buffer = game.getMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc());
+                    //moving character onto location and puts map value of 15
+                    game.changeMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc(), 15);
+
                 }
                 break;
             case KEY_RIGHT: direction= 1;
-                if (game.IsPassable(User.getXLoc(), User.getYLoc()+1, User.getZLoc())) {
-                    User.moveUp(); //goes right
+                if (game.IsPassable(User.getXLoc()+1, User.getYLoc(), User.getZLoc())) {
+                    //changing map back to previous tile
+                    game.changeMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc(), buffer);
+
+                    User.moveRight(); 
+                    //storeing buffer for where character is moving
+                    buffer = game.getMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc());
+                    //moving character onto location and puts map value of 15
+                    game.changeMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc(), 15);
+
                 }
                 break;
             case KEY_LEFT: direction= 0;
-                if (game.IsPassable(User.getXLoc(), User.getYLoc()-1, User.getZLoc())) {
-                    User.moveDown(); //goes left
+                if (game.IsPassable(User.getXLoc()-1, User.getYLoc(), User.getZLoc())) {
+                    //changing map back to previous tile
+                    game.changeMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc(), buffer);
+
+                    User.moveLeft(); 
+                    //storeing buffer for where character is moving
+                    buffer = game.getMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc());
+                    //moving character onto location and puts map value of 15
+                    game.changeMapVal(User.getXLoc(), User.getYLoc(), User.getZLoc(), 15);
                 }
                 break;
             //User found item
             case 'p':
-                flag=game.checkUserLoc(User);
-                //flag = -1 if no item found
+                //could also just check buffer??
+
+                if(buffer>5 && buffer<11){
+                    if(buffer==6){
+                        
+                    }else if(buffer == 7){
+
+                    }else if(buffer == 8){
+
+                    }else if(buffer == 9){
+
+                    }else if(buffer == 10){
+
+                    }
+
+                }
+
                 break;
             //User tries advance to next level
             case 'n':
-                if (level<=2 && User.getBag().getKeyC()>=1) {        //if have a key
-                    User.upLevel();
+                if (level<MAP_LEVELS && User.getBag().getKeyC()>=1) {        //if have a key
                     level++;
+                    start = game.getStart(level);
+                    User.setLoc(start[0],start[1],level);
+                    User.upLevel();
+
+                    // get rid of key
+                    
                 }
                 break;
         }
         game.printMap(row,col,level,User);
+        
 
         //print out win message if won
-        if(level==3) {
+        if(level==MAP_LEVELS) {
             mvprintw((row-20)/2, (col-3*20)/2, "You won! You collected %d gold coins!", User.getBag().getGoldC());
             won=-1;
             refresh();
@@ -163,9 +222,12 @@ int main() {
 
         }
     }
+    game.printMap();
+
+    
     
     //close window if still open
-    if (level!=3)
+    if (level!=MAP_LEVELS)
         endwin();
     
     return 0;

@@ -971,6 +971,8 @@ void World::printMap(int row, int col, int level, Person User){
     
     mapX=(row-MAP_WIDTH)/2;
     mapY=(col-3*MAP_HEIGHT)/2;
+
+    erase();
     
     //draw walls around outside of map (at x=-1, x=41, y=-1, y=21)
     move(mapX-1,mapY-1);
@@ -998,32 +1000,43 @@ void World::printMap(int row, int col, int level, Person User){
 	for(j=0;j<MAP_HEIGHT;j++){
 		move((row-MAP_WIDTH)/2 + j, (col-3*MAP_HEIGHT)/2);
 		for(i=0;i<MAP_WIDTH;i++){
+			// Walls and floors are white
 			if(MapArray[i][j][k]<2){
 				printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter  );
+			//doors are cyan
 			}else if(MapArray[i][j][k]<4){
 				attron(COLOR_PAIR(3));
 				printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
 				attroff(COLOR_PAIR(3));
+			//corridors don't work so doesn't matter
 			}else if(MapArray[i][j][k]<6){
 				attron(COLOR_PAIR(1));
 				printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
 				attroff(COLOR_PAIR(1));
+			//Items are green
 			}else if (MapArray[i][j][k]<11){
 				attron(COLOR_PAIR(2));
 				printw("%c ", ItemIndex[ MapArray[i][j][k] -6 ].dispCharacter );
 				attroff(COLOR_PAIR(2));
+			//monsters are yellow
             }else if (MapArray[i][j][k]<15){
                 attron(COLOR_PAIR(4));
                 printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );
                 attroff(COLOR_PAIR(4));
+            }else{
+            	attron(COLOR_PAIR(5));
+			    printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );
+			    attroff(COLOR_PAIR(5));
             }
+
 		}
 	}
+	/*
     //draw user onto map
     //0,0 of map is (row-MAP_WIDTH)/2, (col-3*MAP_HEIGHT)/2
-    MapArray[User.getXLoc()][User.getYLoc()][k]=15;
+    //MapArray[User.getXLoc()][User.getYLoc()][k]=15;
 
-    move(mapX +User.getXLoc(), mapY +User.getYLoc());
+    //move(mapX +User.getXLoc(), mapY +User.getYLoc());
 
     attron(COLOR_PAIR(5));
     printw("%c", CharIndex[ 4 ].dispCharacter );
@@ -1034,10 +1047,9 @@ void World::printMap(int row, int col, int level, Person User){
     mvprintw(mapX+MAP_HEIGHT+2,mapY+1,"Health: %d", User.getHealth());
     //print out bag to bottom of screen
     mvprintw(mapX+MAP_HEIGHT+4,mapY+1,"Gold: %d \t Keys: %d \t Potions: %d", User.getBag().getGoldC(), User.getBag().getKeyC(),User.getBag().getPotionC());
-    
+    */
+
 	refresh();
-  	getch();
-  	erase();
 }
 
 //check if user has found an item/character
