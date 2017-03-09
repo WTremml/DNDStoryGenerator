@@ -1074,6 +1074,7 @@ void World::printMapLIMITED(int row, int col, int level, Person User){
     //x and y give the user location at the current time
     
     int i, j ,k;
+    int buf=-1;
     int userx, usery;
     int mapX, mapY; //x and y origins of map in real pixels (equivalent to 0,0 in map pixels)
     
@@ -1109,46 +1110,101 @@ void World::printMapLIMITED(int row, int col, int level, Person User){
         printw("%c ", TileIndex[ 1 ].dispCharacter  );
     }
     
+    //get user location
+    userx=User.getXLoc();
+    usery=User.getYLoc();
+    
+    //see if user inside room
+    for (int count=0; count<ROOM_ITER && buf==-1; count++) {
+        if (Room_List[k][count].inside(userx, usery, User.getZLoc())) {
+            //set buf to room number that user is currently in
+            buf=count;
+        }
+    }
+    //if user not in room, buf=-1
+    
     //draw items and characters onto map
     for(j=0;j<MAP_HEIGHT;j++){
         move((row-MAP_WIDTH)/2 + j, (col-3*MAP_HEIGHT)/2);
         for(i=0;i<MAP_WIDTH;i++){
-            // Walls and floors are white
-            if(MapArray[i][j][k]<2){
-                printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter  );
-                //doors are cyan
-            }else if(MapArray[i][j][k]<4){
-                attron(COLOR_PAIR(3));
-                printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
-                attroff(COLOR_PAIR(3));
-                //corridors don't work so doesn't matter
-            }else if(MapArray[i][j][k]<6){
-                attron(COLOR_PAIR(1));
-                printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
-                attroff(COLOR_PAIR(1));
-                // draw items and characters
-            }
-            /*else if (MapArray[i][j][k]<15) {
-                userx=User.getXLoc();
-                usery=User.getYLoc();
-                //ONLY DRAW IF WITHIN CERTAIN DISTANCE OF USER
-                
-                if (abs(userx-i)<=1 && abs(usery-j)<=1) {
-                    //Items are green
-                    if (MapArray[i][j][k]<11){
+
+            //if within user's vision
+            if (abs(userx-i)<=3 && abs(usery-j)<=3) {
+
+                // Walls and floors are white
+                if(MapArray[i][j][k]<2){
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter  );
+                    //doors are cyan
+                }else if(MapArray[i][j][k]<4){
+                    attron(COLOR_PAIR(3));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
+                    attroff(COLOR_PAIR(3));
+                    //corridors don't work so doesn't matter
+                }else if(MapArray[i][j][k]<6){
+                    attron(COLOR_PAIR(1));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
+                    attroff(COLOR_PAIR(1));
+                }
+                //only print if within vision and user within same room
+                    //items are green
+                else if (MapArray[i][j][k]<11){
+                    //if in same room or spot is empty
+                    if ((buf!=-1 && Room_List[k][buf].inside(i, j, k)) ||MapArray[i][j][k]==6 ) {
                         attron(COLOR_PAIR(2));
                         printw("%c ", ItemIndex[ MapArray[i][j][k] -6 ].dispCharacter );
                         attroff(COLOR_PAIR(2));
+                    }else {
+                    //if not in same room
+                        attron(COLOR_PAIR(1));
+                        printw("# ");
+                        attroff(COLOR_PAIR(1));
+                    }
                     //monsters are yellow
-                    }else if (MapArray[i][j][k]<15){
+                }else if (MapArray[i][j][k]<15){
+                    //if in same room or spot is empty
+                    if ((buf!=-1 && Room_List[k][buf].inside(i, j, k))||MapArray[i][j][k]==11) {
                         attron(COLOR_PAIR(4));
                         printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );
                         attroff(COLOR_PAIR(4));
+                    } else {
+                    //if not in same room
+                        attron(COLOR_PAIR(1));
+                        printw("# " );
+                        attroff(COLOR_PAIR(1));
                     }
                 }
-                //else draw black
-            }*/
-            else if (MapArray[i][j][k]==15){
+            }
+            //else draw black
+            else {
+                // Walls and floors are black
+                if(MapArray[i][j][k]<2){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter  );
+                    attroff(COLOR_PAIR(6));
+                    //doors are cyan
+                }else if(MapArray[i][j][k]<4){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
+                    attroff(COLOR_PAIR(6));
+                    //corridors don't work so doesn't matter
+                }else if(MapArray[i][j][k]<6){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
+                    attroff(COLOR_PAIR(6));
+                }
+                //items are green
+                else if (MapArray[i][j][k]<11){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", ItemIndex[ MapArray[i][j][k] -6 ].dispCharacter );
+                    attroff(COLOR_PAIR(6));
+                    //monsters are yellow
+                }else if (MapArray[i][j][k]<15){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );
+                    attroff(COLOR_PAIR(6));
+                }
+            }
+            if (MapArray[i][j][k]==15){
                 //draw user
                 attron(COLOR_PAIR(5));
                 printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );

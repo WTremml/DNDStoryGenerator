@@ -83,6 +83,8 @@ int main() {
     init_pair(3, COLOR_CYAN, COLOR_BLACK);
     init_pair(4, COLOR_YELLOW, COLOR_BLACK);
     init_pair(5, COLOR_BLUE, COLOR_BLACK);
+    init_pair(6, COLOR_BLACK, COLOR_BLACK);
+
 
 
     getmaxyx(stdscr,row,col); // get the number of rows and columns
@@ -111,7 +113,7 @@ int main() {
     //Person User(UserName, mag, start[0], start[1], 0);
     Person User(UserName, mag, start[0],start[1],0);
     
-    game.printMap(row,col,level, User);
+    game.printMapLIMITED(row,col,level, User);
     
     keypad(stdscr, TRUE);     // Initializing keypad
     
@@ -209,7 +211,7 @@ int main() {
                 }
                 break;
         }
-        game.printMap(row,col,level,User);
+        game.printMapLIMITED(row,col,level,User);
         
         //print out lose message if user is dead
         if (User.isDead()) {
