@@ -61,7 +61,9 @@ int main() {
 
     int ch= 0;                // input buffer
     int buffer = 0;
-    int direction, mag, flag, won;
+    int direction, mag;
+    int won=0;
+    int dead=0;
     int* start;               // random start location
     char* name;         // name of character
     int level=0;        //start at level 0
@@ -113,8 +115,6 @@ int main() {
     
     keypad(stdscr, TRUE);     // Initializing keypad
     
-    won=0;
-    
     //test level up
     Key k, k1, k2;
     User.foundKey(k);
@@ -122,7 +122,7 @@ int main() {
     User.foundKey(k2);
     
 
-    while(level<=MAP_LEVELS && won==0 && (ch=getch())!= 'q'){
+    while(level<=MAP_LEVELS && won==0 && (ch=getch())!= 'q' && dead==0){
         switch(ch){
             //User movement on screen
             case KEY_UP: direction= 2; 
@@ -211,9 +211,18 @@ int main() {
         }
         game.printMap(row,col,level,User);
         
-
+        //print out lose message if user is dead
+        if (User.isDead()) {
+            erase();
+            mvprintw((row-20)/2, (col-3*20)/2, "You have died!");
+            dead=-1;
+            refresh();
+            sleep(2);
+            endwin();
+        }
         //print out win message if won
         if(level==MAP_LEVELS) {
+            erase();
             mvprintw((row-20)/2, (col-3*20)/2, "You won! You collected %d gold coins!", User.getBag().getGoldC());
             won=-1;
             refresh();
@@ -227,7 +236,7 @@ int main() {
     
     
     //close window if still open
-    if (level!=MAP_LEVELS)
+    if (won!=-1 && dead!=-1)
         endwin();
     
     return 0;
