@@ -269,7 +269,7 @@ bool Person::found(int x, int y, int z) {    //returns true if item 'found'
     }
     return false;                                       //else item not found
 }
-void Person::foundCharacter(Dummy d) {     //if find another character
+void Person::foundCharacter(Dummy d, int row, int col) {     //if find another character
     //found dummy
     int choice;        //collaborate or fight
     //cout << "Would you like to: 1 - fight them for their gold or 2 - collaborate with them?" << endl;
@@ -290,7 +290,7 @@ void Person::foundCharacter(Dummy d) {     //if find another character
             //if cooperative and not very rich -> get gift from Dummy
             if (d.getGift()==0) {
                 //cout << "You have been gifted a better weapon!" << endl;
-                w.enhance();
+                w.enhance(row, col);
             }
             else {
                 if (armor>0.1) {
@@ -309,29 +309,31 @@ void Person::foundCharacter(Dummy d) {     //if find another character
         fight1(d);
     }
 }
-void Person::foundPotion(Potion p) {             //if find potion
+bool Person::foundPotion() {             //if find potion
     //found potion
     if (bag1.getPotionC() < 1) {             //limit of one potion in bag at a time
         bag1.findPotion();
-        p.setLoc(-1, -1, -1);               //remove potion from screen
+        return(true);
+        //p.setLoc(-1, -1, -1);               //remove potion from screen
     }
     else {
+        return(false);
         //cout << "You can only carry 1 potion at a time!" << endl;
     }
 }
-void Person::foundKey(Key k) {                //if find key
+void Person::foundKey() {                //if find key
     //found key
     bag1.findKey();
-    k.setLoc(-1, -1, -1);                          //remove key from screen
+    //k.setLoc(-1, -1, -1);                          //remove key from screen
 }
-void Person::foundGold(Gold g) {                       //if find gold
+void Person::foundGold() {                       //if find gold
     //found gold
     bag1.findGold();
-    g.setLoc(-1, -1, -1);           //remove gold from screen
+    //g.setLoc(-1, -1, -1);           //remove gold from screen
 }
-void Person::foundWEnhance(Weapon w) {
+void Person::foundWEnhance(int row, int col) {
     //found weapon
-    w.enhance();
+    w.enhance(row, col);
     w.setLoc(-1, -1, -1);           //remove weapon from screen
 }
 Bag Person::getBag() {                  //return copy of bag

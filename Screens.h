@@ -83,7 +83,6 @@ char* Name(int row, int col){
 
   	char welcome[] = "Welcome traveler. You seem to be a bit lost?";
   	char tell[] = "Tell me? What is your name?";
-  	char very[] = "Very well. Press any key to continue.";
 
 
   
@@ -100,7 +99,7 @@ char* Name(int row, int col){
 	getnstr(_name, 40);
 	erase();
 
-	mvprintw((row)/2,(col-strlen(welcome))/2,"%s", very);
+	mvprintw((row)/2,(col-strlen(welcome))/2,"Very well, %s. Press any key to continue.", _name);
 	refresh();
 	getch();
 	erase();
@@ -112,7 +111,6 @@ char* Name(int row, int col){
 int Magic(int row, int col){
 	int i;
 	int ch = 0;
-    char welcome[] = "Welcome traveler. You seem to be a bit lost?";
 
 	char wiz[26][40] = { "   ",
 	"     ",
@@ -217,7 +215,7 @@ int Magic(int row, int col){
 		ch = getch();
 	}
 	erase();
-	mvprintw((row)/2,(col-strlen(welcome))/2,"%s", very);
+	mvprintw((row)/2,(col-strlen(very))/2,"%s", very);
 	refresh();
 
 	getch();

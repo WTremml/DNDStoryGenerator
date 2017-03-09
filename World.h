@@ -40,7 +40,7 @@
 //map dimensions
 #define MAP_WIDTH 20
 #define MAP_HEIGHT 20
-#define MAP_LEVELS 1
+#define MAP_LEVELS 4
     //really map is 20 rows and 40 columns because of spaces between the columns
 
 //define keys per floor

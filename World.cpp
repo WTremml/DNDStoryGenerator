@@ -438,17 +438,17 @@ void World::GenerateMap( void ){
 
 		}
 		for(i=0;i<iter;i++){
-			//items are generated floor by floor, room by room.
+			//characters are generated floor by floor, room by room.
 			generateItems( Room_List[j][i] );
-            //characters are generated floor by floor, room by room.
             generateCharacters( Room_List[j][i] );
+			//items are generated floor by floor, room by room.
+			
+            
 
 		}
         //once per floor, pick random room and generate key
         randRoom=rand()%ROOM_ITER;
-        for (i=0; i<KEY_NUM; i++) {
-            generateKey( Room_List[j][i]);
-        }
+        generateKey( Room_List[j][randRoom]);
         
 	// end of for loop that goes through floors
 	}
@@ -659,18 +659,15 @@ void World::generateKey(Room A){
     x = (rand()%(arr[1]-arr[0]-1))+arr[0]+1;
     y = (rand()%(arr[3]-arr[2]-1))+arr[2]+1;
     
-    Key k;
-    k.setLoc(x, y, arr[4]);
-    //add new key to array
-    keys[kArray]=k;
-    kArray++;
+    MapArray[x][y][arr[4]]=9;
+    
 }
 //randomly puts characters in rooms, does not matter the room size
 void World::generateCharacters(Room A){
     int* arr = A.getLoc();
     
     int x,y,i, player;
-    int N_chars = (rand()%3)+1;
+    int N_chars = (rand()%3);
     
     for(i=0;i<N_chars;i++){
         //generating random location in the room
@@ -1059,13 +1056,13 @@ void World::printMap(int row, int col, int level, Person User){
     attron(COLOR_PAIR(5));
     printw("%c", CharIndex[ 4 ].dispCharacter );
     attroff(COLOR_PAIR(5));
-    
+    */
     
     //print out health to bottom of screen
     mvprintw(mapX+MAP_HEIGHT+2,mapY+1,"Health: %d", User.getHealth());
     //print out bag to bottom of screen
     mvprintw(mapX+MAP_HEIGHT+4,mapY+1,"Gold: %d \t Keys: %d \t Potions: %d", User.getBag().getGoldC(), User.getBag().getKeyC(),User.getBag().getPotionC());
-    */
+    
 
 	refresh();
 }
@@ -1223,6 +1220,9 @@ void World::printMapLIMITED(int row, int col, int level, Person User){
 }
 
 //check if user has found an item/character
+
+/*
+
 int World::checkUserLoc(Person User) {
     int flag=-1;
     
@@ -1295,6 +1295,8 @@ int World::checkUserLoc(Person User) {
     return flag;
 
 }
+
+*/
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////

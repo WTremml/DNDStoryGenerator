@@ -106,11 +106,11 @@ public:
     
     bool found(int x, int y, int z);    //returns true if item 'found'
     void foundMonster(Monster m);       //if encounter monster
-    void foundCharacter(Dummy d);       //if find another character
-    void foundPotion(Potion p);             //if find potion
-    void foundKey(Key k);                   //if find key
-    void foundGold(Gold g);                 //if find gold
-    void foundWEnhance(Weapon w);           //if find weapon enhancement
+    void foundCharacter(Dummy d, int row, int col);       //if find another character
+    bool foundPotion();             //if find potion
+    void foundKey();                   //if find key
+    void foundGold();                 //if find gold
+    void foundWEnhance(int row, int col);           //if find weapon enhancement
     void useKey();             //use key
     void usePotion();          //use potion
     void useGold(int g);       //use gold

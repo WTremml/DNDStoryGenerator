@@ -10,9 +10,13 @@
 #ifndef item_h
 #define item_h
 #include <string>
+#include <ncurses.h>
 
 #include <iostream>
 using namespace std;
+
+
+#define DAMAGE 3
 
 ///////////////////////////////////////////////////////////////////
 class Item {
@@ -41,7 +45,7 @@ public:
     ~Weapon(){}             //destructor
     
     int getDamage();        //return damage weapon inflicts
-    void enhance();         //enhance current weapon
+    void enhance(int row, int col);         //enhance current weapon
 };
 
 ///////////////////////////////////////////////////////////////////
