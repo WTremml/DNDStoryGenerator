@@ -61,9 +61,11 @@ int main() {
 
     int ch= 0;                // input buffer
     int buffer = 0;
+
     int won = 0;
     int dead=0;
     int direction, mag;
+
     int* start;               // random start location
     char* name;         // name of character
     int level=0;        //start at level 0
@@ -120,6 +122,7 @@ int main() {
     
     keypad(stdscr, TRUE);     // Initializing keypad
     
+
     while(level<=MAP_LEVELS && won==0 && (ch=getch())!= 'q' && dead==0){
         if (User.isDead()) {
             erase();

@@ -448,9 +448,7 @@ void World::GenerateMap( void ){
 		}
         //once per floor, pick random room and generate key
         randRoom=rand()%ROOM_ITER;
-        for (i=0; i<KEY_NUM; i++) {
-            generateKey( Room_List[j][i]);
-        }
+        generateKey( Room_List[j][randRoom]);
         
 	// end of for loop that goes through floors
 	}
@@ -661,11 +659,8 @@ void World::generateKey(Room A){
     x = (rand()%(arr[1]-arr[0]-1))+arr[0]+1;
     y = (rand()%(arr[3]-arr[2]-1))+arr[2]+1;
     
-    Key k;
-    k.setLoc(x, y, arr[4]);
-    //add new key to array
-    keys[kArray]=k;
-    kArray++;
+    MapArray[x][y][arr[4]]=9;
+    
 }
 //randomly puts characters in rooms, does not matter the room size
 void World::generateCharacters(Room A){
