@@ -277,13 +277,13 @@ class World{
         cols=c;
     }
     
-	int* getStart(){
+	int* getStart(int z){
 		int i = rand()%ROOM_ITER;
 		int* arr;
 
 		arr = new int[2];
-		arr[0] = Room_List[0][i].getCenter(0);
-		arr[1] = Room_List[0][i].getCenter(1);
+		arr[0] = Room_List[z][i].getCenter(0);
+		arr[1] = Room_List[z][i].getCenter(1);
 
 		return(arr);
 
@@ -291,10 +291,9 @@ class World{
 	//returns the map values
 	int getMapVal(int x, int y, int z){return(MapArray[x][y][z]);}
 	//changes mapval and returns what was previously there
-	int changeMapVal(int x, int y, int z, int Input){
-		int temp = MapArray[x][y][z];
+	void changeMapVal(int x, int y, int z, int Input){
+		//int temp = MapArray[x][y][z];
 		MapArray[x][y][z] = Input;
-		return(temp);
 	}
 	//based on tile type, if a person can walk through it. Mostly used for corridors
 	bool IsPassable( int x, int y, int z );

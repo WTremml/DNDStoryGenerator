@@ -6,6 +6,7 @@
  */
 
 #include "character.h"
+#include "world.h"
 
 ///////////////////////////////////////////////////////////////////
 Character::Character() {			//default constructor
@@ -57,16 +58,31 @@ void Character::setHealth(int h) {      //set health
     health=h;
 }
 void Character::moveRight() {           //control character location on screen
-    xLocation++;
+    if(xLocation<MAP_WIDTH-1){
+        xLocation++;
+    }
 }
 void Character::moveLeft() {
-    xLocation--;
+    if(xLocation>0){
+        xLocation--;
+    }
 }
+
+//remember that y locations are switched
+/*  00  10  20
+    01  11  21
+    02  12  22
+*/
 void Character::moveUp() {
-    yLocation++;
+    //prevents seg fault
+    if(yLocation>0){
+        yLocation--;
+    }
 }
 void Character::moveDown() {
-    yLocation--;
+    if(yLocation<MAP_HEIGHT-1){
+        yLocation++;
+    }
 }
 void Character::climbUp() {
     zLocation++;
@@ -597,7 +613,6 @@ void Person::run(Monster mon) {
 }
 void Person::upLevel() {
     if (bag1.getKeyC()>=1) {        //if have a key
-        moveUp();                   //move up level
         bag1.useKey();              //use key
         m.charging();               //recharge magic power at start of each level
     }
