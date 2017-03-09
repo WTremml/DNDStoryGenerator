@@ -54,14 +54,16 @@ list *node1 = NULL;
 list *node2 = NULL;
 
 
-
+ 
 
 int main() {
 	srand(time(NULL));
 
     int ch= 0;                // input buffer
     int buffer = 0;
-    int direction, mag, flag, won;
+    int won = 0;
+    int dead=0;
+    int direction, mag;
     int* start;               // random start location
     char* name;         // name of character
     int level=0;        //start at level 0
@@ -69,7 +71,7 @@ int main() {
     //making the world
     World game;
 	game.GenerateMap();
-    game.printMap();
+    //game.printMap();
 
 	int row,col;       		    // to store the number of rows columns of the screen 
     initscr();       			// start the curses mode
@@ -81,6 +83,8 @@ int main() {
     init_pair(3, COLOR_CYAN, COLOR_BLACK);
     init_pair(4, COLOR_YELLOW, COLOR_BLACK);
     init_pair(5, COLOR_BLUE, COLOR_BLACK);
+    init_pair(6, COLOR_BLACK, COLOR_BLACK);
+
 
 
     getmaxyx(stdscr,row,col); // get the number of rows and columns
@@ -90,6 +94,7 @@ int main() {
     name = Name(row, col);
     std::string UserName(name);
     delete[] name;
+    name = NULL;
     
     //must happen after the world is generated
     start = game.getStart(0);
@@ -108,21 +113,23 @@ int main() {
     //creating character
     //Person User(UserName, mag, start[0], start[1], 0);
     Person User(UserName, mag, start[0],start[1],0);
+    delete[] start;
+    start = NULL;
     
-    game.printMap(row,col,level, User);
+    game.printMapLIMITED(row,col,level, User);
     
     keypad(stdscr, TRUE);     // Initializing keypad
     
-    won=0;
-    
-    //test level up
-    Key k, k1, k2;
-    User.foundKey(k);
-    User.foundKey(k1);
-    User.foundKey(k2);
-    
+    while(level<=MAP_LEVELS && won==0 && (ch=getch())!= 'q' && dead==0){
+        if (User.isDead()) {
+            erase();
+            mvprintw((row-20)/2, (col-3*20)/2, "You have died!");
+            dead=-1;
+            refresh();
+            sleep(2);
+            endwin();
+        }
 
-    while(level<=MAP_LEVELS && won==0 && (ch=getch())!= 'q'){
         switch(ch){
             //User movement on screen
             case KEY_UP: direction= 2; 
@@ -180,18 +187,23 @@ int main() {
             case 'p':
                 //could also just check buffer??
 
-                if(buffer>5 && buffer<11){
-                    if(buffer==6){
-                        
-                    }else if(buffer == 7){
-
+                if(buffer>6 && buffer<11){
+                    if(buffer == 7){
+                        if(User.foundPotion()){
+                            buffer = 0;
+                        }
                     }else if(buffer == 8){
-
+                        User.foundGold();
+                        buffer = 0;
                     }else if(buffer == 9){
-
+                        User.foundKey();
+                        buffer=0;
                     }else if(buffer == 10){
-
-                    }
+                        User.foundWEnhance(row, col);
+                        buffer=0;
+                        sleep(2);
+                        erase();
+                    } 
 
                 }
 
@@ -204,30 +216,42 @@ int main() {
                     User.setLoc(start[0],start[1],level);
                     User.upLevel();
 
-                    // get rid of key
+                    delete[] start;
+                    start = NULL;
                     
                 }
                 break;
         }
-        game.printMap(row,col,level,User);
         
-
+        //print out lose message if user is dead
+        if (User.isDead()) {
+            erase();
+            mvprintw((row-20)/2, (col-3*20)/2, "You have died!");
+            dead=-1;
+            refresh();
+            sleep(2);
+            endwin();
+        }
         //print out win message if won
         if(level==MAP_LEVELS) {
+            erase();
             mvprintw((row-20)/2, (col-3*20)/2, "You won! You collected %d gold coins!", User.getBag().getGoldC());
             won=-1;
             refresh();
             sleep(2);
             endwin();
 
+        }else{
+            game.printMapLIMITED(row,col,level,User);
         }
+
+
     }
-    game.printMap();
+    //game.printMap();
 
     
-    
     //close window if still open
-    if (level!=MAP_LEVELS)
+    if (won!=-1 && dead!=-1)
         endwin();
     
     return 0;

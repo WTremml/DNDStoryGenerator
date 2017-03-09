@@ -40,9 +40,11 @@
 //map dimensions
 #define MAP_WIDTH 20
 #define MAP_HEIGHT 20
-#define MAP_LEVELS 1
+#define MAP_LEVELS 4
     //really map is 20 rows and 40 columns because of spaces between the columns
 
+//define keys per floor
+#define KEY_NUM 1
 
 // Tile types
 #define TILE_ROCKFLOOR		0
@@ -270,6 +272,8 @@ class World{
 	void generateItems(Room A);
     // makes characters
     void generateCharacters(Room A);
+    // makes keys
+    void generateKey(Room A);
     
     //sets screen dimensions
     void setScreen(int r, int c) {
@@ -303,8 +307,11 @@ class World{
 	// prints map to screen using NCURSES 
 	void printMap(int row, int col, int level, Person User);
     
+    // prints map to screen using NCURSES - user can only see limited part of map
+    void printMapLIMITED(int row, int col, int level, Person User);
+    
     //check if user has found an object or computer character
-     int checkUserLoc(Person user);
+    int checkUserLoc(Person user);
 
 };
 #endif

@@ -37,7 +37,7 @@ void Item::setLoc(int x, int y, int z) {	//set location
 
 ///////////////////////////////////////////////////////////////////
 Weapon::Weapon() {                  //default constructor
-    damage = 3;     //how much damage each hit of weapon inflicts
+    damage = DAMAGE;     //how much damage each hit of weapon inflicts
 }
 Weapon::Weapon(int x, int y, int z) {
     Item::setLoc(x,y,z);
@@ -49,9 +49,26 @@ Weapon::Weapon(Weapon& old){        //copy constructor
 int Weapon::getDamage() {           //return damage inflicts
     return damage;
 }
-void Weapon::enhance() {        //reset weapon
+void Weapon::enhance(int row, int col) {        //reset weapon
     //increases damage capability of weapon
-    damage++;
+    int i = rand()%10;
+
+    if(i==10){
+        damage = DAMAGE-1;
+        erase();
+        mvprintw(row/2, (col-65)/2, "A cursed weapon binds to your hand! Your damage has been reset to %d", damage);
+        refresh();
+    }else if(i>7 && damage>=2){
+        damage--;
+        erase();
+        mvprintw(row/2, (col-58)/2, "A spell breaks part of your weapon. Damage decreases to %d", damage);
+        refresh();
+    }else{
+        damage++;
+        erase();
+        mvprintw(row/2, (col-41)/2, "You find a new toy! Damage increases to %d", damage);
+        refresh();
+    }
 }
 
 ///////////////////////////////////////////////////////////////////
@@ -126,7 +143,7 @@ void Bag::usePotion() {          //use potion
     potionCount--;
 }
 void Bag::useKey() {              //use key
-    keyCount--;
+    keyCount=0;
 }
 Bag& Bag::operator=(Bag& rhs) { //overload =
     goldCount=rhs.goldCount;
