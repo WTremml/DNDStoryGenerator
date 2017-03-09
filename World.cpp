@@ -1213,24 +1213,12 @@ void World::printMapLIMITED(int row, int col, int level, Person User){
         
         }
     }
-    /*
-     //draw user onto map
-     //0,0 of map is (row-MAP_WIDTH)/2, (col-3*MAP_HEIGHT)/2
-     //MapArray[User.getXLoc()][User.getYLoc()][k]=15;
-     
-     //move(mapX +User.getXLoc(), mapY +User.getYLoc());
-     
-     attron(COLOR_PAIR(5));
-     printw("%c", CharIndex[ 4 ].dispCharacter );
-     attroff(COLOR_PAIR(5));
-     
      
      //print out health to bottom of screen
      mvprintw(mapX+MAP_HEIGHT+2,mapY+1,"Health: %d", User.getHealth());
      //print out bag to bottom of screen
      mvprintw(mapX+MAP_HEIGHT+4,mapY+1,"Gold: %d \t Keys: %d \t Potions: %d", User.getBag().getGoldC(), User.getBag().getKeyC(),User.getBag().getPotionC());
-     */
-    
+     
     refresh();
 }
 
