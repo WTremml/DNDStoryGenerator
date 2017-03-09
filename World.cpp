@@ -915,7 +915,7 @@ void World::generatePaths(){
 bool World::IsPassable( int x, int y, int z )
 {
     // Before we do anything, make sure that the coordinates are valid
-    if( x < 0 || x >= MAP_WIDTH || y < 0 || y >= 2*MAP_HEIGHT )
+    if( x < 0 || x >= MAP_WIDTH || y < 0 || y >= MAP_HEIGHT )
         return false;
     
 
@@ -958,7 +958,7 @@ void World::printMap(){
 }
 
 //prints the map with the NCURSES
-void World::printMap(int row, int col, int level, int x, int y){
+void World::printMap(int row, int col, int level, Person User){
     //x and y give the user location at the current time
     
 	int i, j ,k;
@@ -1021,18 +1021,98 @@ void World::printMap(int row, int col, int level, int x, int y){
 	}
     //draw user onto map
     //0,0 of map is (row-MAP_WIDTH)/2, (col-3*MAP_HEIGHT)/2
-    move(mapX +x, mapY +y);
+    MapArray[User.getXLoc()][User.getYLoc()][k]=15;
+
+    move(mapX +User.getXLoc(), mapY +User.getYLoc());
 
     attron(COLOR_PAIR(5));
-    MapArray[x][y][k]=15;
     printw("%c", CharIndex[ 4 ].dispCharacter );
     attroff(COLOR_PAIR(5));
+    
+    
+    //print out health to bottom of screen
+    mvprintw(mapX+MAP_HEIGHT+2,mapY+1,"Health: %d", User.getHealth());
+    //print out bag to bottom of screen
+    mvprintw(mapX+MAP_HEIGHT+4,mapY+1,"Gold: %d \t Keys: %d \t Potions: %d", User.getBag().getGoldC(), User.getBag().getKeyC(),User.getBag().getPotionC());
     
 	refresh();
   	getch();
   	erase();
 }
 
+//check if user has found an item/character
+int World::checkUserLoc(Person User) {
+    int flag=-1;
+    
+    //check Potion array
+    for (int i=0; i<pArray && flag!=0; i++) {
+        if (User.found(potions[i].getX(), potions[i].getY(), potions[i].getZ())) {
+            //if found potions[i]
+            User.foundPotion(potions[i]);
+            MapArray[potions[i].getX(), potions[i].getY(), potions[i].getZ()]=0;    //set item tile to empty
+            //potion can stay in array because location is reset to -1,-1,-1 when found
+                //search potions array by location -> so will just be ignored in later searches
+            flag=0; //exit for loop
+        }
+    }
+    //check Gold array
+    for (int i=0; i<gArray&& flag!=0; i++) {
+        if (User.found(golds[i].getX(), golds[i].getY(), golds[i].getZ())) {
+            //if found golds[i]
+            User.foundGold(golds[i]);
+            MapArray[golds[i].getX(), golds[i].getY(), golds[i].getZ()]=0;    //set item tile to empty
+            //gold can stay in array because location is reset to -1,-1,-1 when found
+            //search golds array by location -> so will just be ignored in later searches
+            flag=0; //exit for loop
+        }
+    }
+    //check Key array
+    for (int i=0; i<kArray&& flag!=0; i++) {
+        if (User.found(keys[i].getX(), keys[i].getY(), keys[i].getZ())) {
+            //if found keys[i]
+            User.foundKey(keys[i]);
+            MapArray[keys[i].getX(), keys[i].getY(), keys[i].getZ()]=0;    //set item tile to empty
+            //key can stay in array because location is reset to -1,-1,-1 when found
+            //search keys array by location -> so will just be ignored in later searches
+            flag=0; //exit for loop
+        }
+    }
+    //check Weapon array
+    for (int i=0; i<wArray&& flag!=0; i++) {
+        if (User.found(weapons[i].getX(), weapons[i].getY(), weapons[i].getZ())) {
+            //if found weapons[i]
+            User.foundWEnhance(weapons[i]);
+            MapArray[weapons[i].getX(), weapons[i].getY(), weapons[i].getZ()]=0;    //set item tile to empty
+            //weapon can stay in array because location is reset to -1,-1,-1 when found
+            //search weapons array by location -> so will just be ignored in later searches
+            flag=0; //exit for loop
+        }
+    }
+    //check Monster array
+    for (int i=0; i<mArray&& flag!=0; i++) {
+        if (User.found(monsters[i].getXLoc(), monsters[i].getYLoc(), monsters[i].getZLoc())) {
+            //if found monsters[i]
+            User.foundMonster(monsters[i]);
+            MapArray[monsters[i].getXLoc(), monsters[i].getYLoc(), monsters[i].getZLoc()]=0;    //set item tile to empty
+            //monsters can stay in array because location is reset to -1,-1,-1 when found
+            //search monsters array by location -> so will just be ignored in later searches
+            flag=0; //exit for loop
+        }
+    }
+    //check Dummy array
+    for (int i=0; i<dArray&& flag!=0; i++) {
+        if (User.found(dummies[i].getXLoc(), dummies[i].getYLoc(), dummies[i].getZLoc())) {
+            //if found dummies[i]
+            User.foundCharacter(dummies[i]);
+            MapArray[dummies[i].getXLoc(), dummies[i].getYLoc(), dummies[i].getZLoc()]=0;    //set item tile to empty
+            //dummies can stay in array because location is reset to -1,-1,-1 when found
+            //search dummies array by location -> so will just be ignored in later searches
+            flag=0; //exit for loop
+        }
+    }
+    return flag;
+
+}
 
 
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////////
