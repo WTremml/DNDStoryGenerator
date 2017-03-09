@@ -302,9 +302,10 @@ class World{
 	void printMap();
 
 	// prints map to screen using NCURSES 
-	void printMap(int row, int col, int level, int x, int y);
-        //int x and int y are the x and y and z of the user's location
-
+	void printMap(int row, int col, int level, Person User);
+    
+    //check if user has found an object or computer character
+     int checkUserLoc(Person user);
 
 };
 #endif

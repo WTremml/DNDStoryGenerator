@@ -227,21 +227,19 @@ void Person::useGold(int g) {       //use gold
 }
 void Person::foundMonster(Monster mon) {        //if encounter monster
     int choice;
-    if(found(mon.getXLoc(), mon.getYLoc(), mon.getZLoc())) {         //if found
-        //will they fight or not?
-        cout << "Do you want to fight or run? 1-Fight 2-Run" << endl;
-        cin >> choice;
+    //will they fight or not?
+    cout << "Do you want to fight or run? 1-Fight 2-Run" << endl;
+    cin >> choice;
         
-        if (choice==1) {        //if fight
-            fight(mon);
-        }
-        else if (choice==2) {   //if run
-            run(mon);
-        }
-        else {
-            cout << "Invalid entry. You must fight." << endl;
-            fight(mon);
-        }
+    if (choice==1) {        //if fight
+        fight(mon);
+    }
+    else if (choice==2) {   //if run
+        run(mon);
+    }
+    else {
+        cout << "Invalid entry. You must fight." << endl;
+        fight(mon);
     }
 }
 bool Person::found(int x, int y, int z) {    //returns true if item 'found'
@@ -257,72 +255,68 @@ bool Person::found(int x, int y, int z) {    //returns true if item 'found'
 }
 void Person::foundCharacter(Dummy d) {     //if find another character
     //found dummy
-    int choice;
-    if(found(d.getXLoc(), d.getYLoc(), d.getZLoc())) {         //if found
-        //collaborate or fight
-        cout << "Would you like to: 1 - fight them for their gold or 2 - collaborate with them?" << endl;
-        cin >> choice;
+    int choice;        //collaborate or fight
+    //cout << "Would you like to: 1 - fight them for their gold or 2 - collaborate with them?" << endl;
+    //cin >> choice;
+    
+    if (getBag().getGoldC()<5 && health>50) {   //fight if healthy and poor
+        choice=1;
+    }
+    else {  //else collaborate
+        choice=2;
+    }
         
-        if (choice==1) {        //if fight
-            fight1(d);          //fight
-        }
-        else if (choice==2) {   //if collaborate
-            if (d.getCoop()>5 && d.getBag().getGoldC()<10) {
-                //if cooperative and not very rich -> get gift from Dummy
-                if (d.getGift()==0) {
-                    cout << "You have been gifted a better weapon!" << endl;
-                    w.enhance();
-                }
-                else {
-                    if (armor>0.1) {
-                        cout << "You have been gifted heavier armor!" << endl;
-                        armor-=0.01;
-                    }
-                }
+    if (choice==1) {        //if fight
+        fight1(d);          //fight
+    }
+    else if (choice==2) {   //if collaborate
+        if (d.getCoop()>5 && d.getBag().getGoldC()<10) {
+            //if cooperative and not very rich -> get gift from Dummy
+            if (d.getGift()==0) {
+                //cout << "You have been gifted a better weapon!" << endl;
+                w.enhance();
             }
             else {
-            //if can't cooperate with dummy
-                fight1(d);
+                if (armor>0.1) {
+                    //cout << "You have been gifted heavier armor!" << endl;
+                    armor-=0.01;
+                }
             }
         }
         else {
-            cout << "Invalid entry. You must fight." << endl;
+        //if can't cooperate with dummy
             fight1(d);
         }
+    }
+    else {
+        //cout << "Invalid entry. You must fight." << endl;
+        fight1(d);
     }
 }
 void Person::foundPotion(Potion p) {             //if find potion
     //found potion
-    if (found(p.getX(), p.getY(), p.getZ())) {   //if found
-        if (bag1.getPotionC() < 1) {             //limit of one potion in bag at a time
-            bag1.findPotion();
-            p.setLoc(-1, -1, -1);               //remove potion from screen
-        }
-        else {
-            cout << "You can only carry 1 potion at a time!" << endl;
-        }
+    if (bag1.getPotionC() < 1) {             //limit of one potion in bag at a time
+        bag1.findPotion();
+        p.setLoc(-1, -1, -1);               //remove potion from screen
+    }
+    else {
+        //cout << "You can only carry 1 potion at a time!" << endl;
     }
 }
 void Person::foundKey(Key k) {                //if find key
     //found key
-    if (found(k.getX(), k.getY(), k.getZ())) {         //if found
-        bag1.findKey();
-        k.setLoc(-1, -1, -1);                          //remove key from screen
-    }
+    bag1.findKey();
+    k.setLoc(-1, -1, -1);                          //remove key from screen
 }
 void Person::foundGold(Gold g) {                       //if find gold
     //found gold
-    if (found(g.getX(), g.getY(), g.getZ())) {         //if found
-        bag1.findGold();
-        g.setLoc(-1, -1, -1);           //remove gold from screen
-    }
+    bag1.findGold();
+    g.setLoc(-1, -1, -1);           //remove gold from screen
 }
 void Person::foundWEnhance(Weapon w) {
     //found weapon
-    if (found(w.getX(), w.getY(), w.getZ())) {         //if found
-        w.enhance();
-        w.setLoc(-1, -1, -1);           //remove weapon from screen
-    }
+    w.enhance();
+    w.setLoc(-1, -1, -1);           //remove weapon from screen
 }
 Bag Person::getBag() {                  //return copy of bag
     Bag bag2;
@@ -335,25 +329,32 @@ void Person::fight(Monster mon) {
     int hurt;
     while (!mon.isDead() && !isDead()) {          //while can fight
         if (m.isCharged() && m.getType()==1) {    //is magic=strength AND magic charged
-            cout << "Do you want to use your magic power to kill the monster? 1-Yes 2-No" << endl;
-            cin >> choice;
+            //cout << "Do you want to use your magic power to kill the monster? 1-Yes 2-No" << endl;
+            //cin >> choice;
+            
+            if(mon.getType()==1 && health<50) { //if weak and facing big monster
+                choice=1;
+            }
+            else {  //else don't use magic power
+                choice=2;
+            }
             
             if (choice==1) {                //if use super strength
                 mon.setHealth(0);           //kill monster
-                cout << "You have killed the monster!" << endl;
+                //cout << "You have killed the monster!" << endl;
                 m.usePower();               //used power
             }
             else if (choice==2) {
-                cout << "You have decided not to use your magic." << endl;
+                //cout << "You have decided not to use your magic." << endl;
             }
             else {
-                cout << "Invalid entry. Magic not used." << endl;
+                //cout << "Invalid entry. Magic not used." << endl;
             }
         }
         //you injured monster during fight
         if (!mon.isDead()) {
             mon.injured(w.getDamage());           //monster injured
-            cout << "You have injured the monster! ";
+            //cout << "You have injured the monster! ";
         }
         
         //monster injured you during fight
@@ -365,56 +366,65 @@ void Person::fight(Monster mon) {
             
             if (k<=armor) {                     //if armor didn't protect you
                 health-=mon.getDamage();            //lose 3 health point if small monster, 6 health points if big monster
-                cout << "But you have also been hurt by the monster.";
+                //cout << "But you have also been hurt by the monster.";
             
-                cout << endl << "Monster health: " << mon.getHealth() << "     Your health: " << health << endl;
+                //cout << endl << "Monster health: " << mon.getHealth() << "     Your health: " << health << endl;
             
                 if (isDead() && m.getType()==2 && m.isCharged()) {          //if dead and can heal self
-                    cout << "Do you want to use your magic power to heal yourself? 1-Yes 2-No" << endl;
-                    cin >> choice;
+                    //cout << "Do you want to use your magic power to heal yourself? 1-Yes 2-No" << endl;
+                    //cin >> choice;
+                    
+                    choice=1;           //use magic
                 
                     if (choice==1) {        //if use healing power
                         health=100;         //fully charged health
-                        cout << "You have healed yourself!" << endl;
+                        //cout << "You have healed yourself!" << endl;
                         m.usePower();       //used power
                     }
                     else if (choice==2) {
-                        cout << "You have decided not to use your magic." << endl;
+                        //cout << "You have decided not to use your magic." << endl;
                     }
                     else {
-                        cout << "Invalid entry. Magic not used." << endl;
+                        //cout << "Invalid entry. Magic not used." << endl;
                     }
                 }
             }
         }
         if (health<=50 && bag1.getPotionC()>0) {      //if low on health and have a potion in bag
-            cout << "Do you want to use a potion? 1-Yes 2-No" << endl;
-            cin >> choice;
+            //cout << "Do you want to use a potion? 1-Yes 2-No" << endl;
+            //cin >> choice;
+            
+            if (mon.getType()==1 || health<20) {         //use potion if big monster or very low health
+                choice=1;
+            }
+            else {
+                choice=2;
+            }
             
             if (choice==1) {        //if use potion
                 healed();
-                cout << "You have used a potion!" << endl;
+                //cout << "You have used a potion!" << endl;
             }
             else if (choice==2) {
-                cout << "You have decided not to use your potions." << endl;
+                //cout << "You have decided not to use your potions." << endl;
             }
             else {
-                cout << "Invalid entry. Potion not used." << endl;
+                //cout << "Invalid entry. Potion not used." << endl;
             }
         }
-        cout << endl << "Monster health: " << mon.getHealth() << "     Your health: " << health << endl;
+        //cout << endl << "Monster health: " << mon.getHealth() << "     Your health: " << health << endl;
     }
     if (!mon.isDead()) {                             //if can't fight but monster is still alive
         if (isDead()) {                              //if you are out of health
-            cout << "You have died! ";
+            //cout << "You have died! ";
         }
         health=0;                                    //set your health to 0
-        cout << "The monster wins." << endl;
+        //cout << "The monster wins." << endl;
     }
     else if (mon.isDead()) {                         //if monster dead
-        cout << "You have beaten the monster." << endl;
+        //cout << "You have beaten the monster." << endl;
         if (armor>0.1) {
-            cout << "You have earned heavier armor!" << endl;
+            //cout << "You have earned heavier armor!" << endl;
             armor-=0.01;
         }
     }
@@ -425,25 +435,31 @@ void Person::fight1(Dummy d) {
     int hurt;
     while (!d.isDead() && !isDead()) {            //while can fight
         if (m.isCharged() && m.getType()==1) {    //is magic=strength AND magic charged
-            cout << "Do you want to use your magic power to kill the dummy? 1-Yes 2-No" << endl;
-            cin >> choice;
+            //cout << "Do you want to use your magic power to kill the dummy? 1-Yes 2-No" << endl;
+            //cin >> choice;
             
+            if (health<50 && getBag().getGoldC()<10) { // use magic if weak and poor
+                choice=1;
+            }
+            else {
+                choice=2;
+            }
             if (choice==1) {          //if use super strength
                 d.setHealth(0);       //kill dummy
-                cout << "You have killed the dummy!" << endl;
+                //cout << "You have killed the dummy!" << endl;
                 m.usePower();         //used power
             }
             else if (choice==2) {
-                cout << "You have decided not to use your magic." << endl;
+                //cout << "You have decided not to use your magic." << endl;
             }
             else {
-                cout << "Invalid entry. Magic not used." << endl;
+                //cout << "Invalid entry. Magic not used." << endl;
             }
         }
         //you injured dummy during fight
         if (!d.isDead()) {
             d.injured(w.getDamage());
-            cout << "You have injured the dummy! ";
+            //cout << "You have injured the dummy! ";
         }
         //dummy injured you during fight
         int nice;
@@ -463,56 +479,65 @@ void Person::fight1(Dummy d) {
             
             if (k<=armor) {                  //if armor didn't protect you
                 health-=(nice+1);            //lose 2 health point if not nice, 1 health point if big nice
-                cout << "But you have also been hurt by the dummy.";
+                //cout << "But you have also been hurt by the dummy.";
                 
-                cout << endl << "Dummy health: " << d.getHealth() << "     Your health: " << health << endl;
+                //cout << endl << "Dummy health: " << d.getHealth() << "     Your health: " << health << endl;
                 
                 if (isDead() && m.getType()==2 && m.isCharged()) {          //if dead and can heal self
-                    cout << "Do you want to use your magic power to heal yourself? 1-Yes 2-No" << endl;
-                    cin >> choice;
+                    //cout << "Do you want to use your magic power to heal yourself? 1-Yes 2-No" << endl;
+                    //cin >> choice;
+                    
+                    choice=1;           //use magic to heal yourself
                     
                     if (choice==1) {        //if use healing power
                         health=100;         //fully charged health
-                        cout << "You have healed yourself!" << endl;
+                        //cout << "You have healed yourself!" << endl;
                         m.usePower();       //used power
                     }
                     else if (choice==2) {
-                        cout << "You have decided not to use your magic." << endl;
+                        //cout << "You have decided not to use your magic." << endl;
                     }
                     else {
-                        cout << "Invalid entry. Magic not used." << endl;
+                        //cout << "Invalid entry. Magic not used." << endl;
                     }
                 }
             }
         }
         if (health<=50 && bag1.getPotionC()>0) {      //if low on health and have a potion in bag
-            cout << "Do you want to use a potion? 1-Yes 2-No" << endl;
-            cin >> choice;
+            //cout << "Do you want to use a potion? 1-Yes 2-No" << endl;
+            //cin >> choice;
+            
+            if(health<20 && d.getHealth()>20) {  //use potion if very weak and dummy strong
+                choice=1;
+            }
+            else {
+                choice=2;
+            }
             
             if (choice==1) {        //if use potion
                 healed();
-                cout << "You have used a potion!" << endl;
+                //cout << "You have used a potion!" << endl;
             }
             else if (choice==2) {
-                cout << "You have decided not to use your potions." << endl;
+                //cout << "You have decided not to use your potions." << endl;
             }
             else {
-                cout << "Invalid entry. Potion not used." << endl;
+                //cout << "Invalid entry. Potion not used." << endl;
             }
         }
-        cout << endl << "Dummy health: " << d.getHealth() << "     Your health: " << health << endl;
+        //cout << endl << "Dummy health: " << d.getHealth() << "     Your health: " << health << endl;
     }
     if (!d.isDead()) {                                    //if can't fight but dummy is still alive
         if (isDead()) {                             //if you are out of health
-            cout << "You have died! ";
+            //cout << "You have died! ";
         }
         health=0;                                       //set your health to 0
-        cout << "The dummy wins." << endl;
+        //cout << "The dummy wins." << endl;
     }
     else if (d.isDead()) {                            //if monster dead
-        cout << "You have beaten the dummy." << endl;
+        //cout << "You have beaten the dummy." << endl;
         if (armor>0.1) {
-            cout << "You have earned " << d.getBag().getGoldC() << " gold pieces!" << endl;
+            //cout << "You have earned " << d.getBag().getGoldC() << " gold pieces!" << endl;
             for (int i=0; i<=d.getBag().getGoldC(); i++) {
                 bag1.findGold();
             }
@@ -525,20 +550,27 @@ void Person::run(Monster mon) {
     int caught;
     if (m.isCharged() && m.getType()==0) {      //if magic charged and super speed
         //run away from monster works
-        cout << "Do you want to use your magic power to run away? 1-Yes 2-No" << endl;
-        cin >> choice;
+        //cout << "Do you want to use your magic power to run away? 1-Yes 2-No" << endl;
+        //cin >> choice;
+        
+        if (mon.getType()==1 && health<50) {     //use magic if big monster and low on health
+            choice=1;
+        }
+        else {          //don't use magic
+            choice=2;
+        }
         
         if (choice==1) {        //if use super speed
             mon.setLoc(-1,-1,-1);
-            cout << "You ran away! The monster tried to chase you, but got lost." << endl;
+            //cout << "You ran away! The monster tried to chase you, but got lost." << endl;
             m.usePower();       //used power
         }
         else if (choice==2) {
-            cout << "You have decided not to use your magic." << endl;
+            //cout << "You have decided not to use your magic." << endl;
             fight(mon);
         }
         else {
-            cout << "Invalid entry. Magic not used." << endl;
+            //cout << "Invalid entry. Magic not used." << endl;
             fight(mon);
         }
     }
@@ -546,19 +578,19 @@ void Person::run(Monster mon) {
         escape=rand()%(mon.getAggressive());    //can run away 1/1 - 1/10 times depending on mon aggression
         if (escape==0) {
             mon.setLoc(-1,-1,-1);
-            cout << "You ran away! " << endl;
+            //cout << "You ran away! " << endl;
             caught=rand()%(mon.getWander());    //can run away 1/1 - 1/10 times depending on mon wandering
                                                     //escape more often is mon has low wandering speed
             if (caught==0) {
-                cout << "The monster tried to chase you, but got lost." << endl;
+                //cout << "The monster tried to chase you, but got lost." << endl;
             }
             else {
-                cout << "The monster caught you. You must fight!" << endl;
+                //cout << "The monster caught you. You must fight!" << endl;
                 fight(mon);
             }
         }
         else {
-            cout << "The monster caught you. You must fight!" << endl;
+            //cout << "The monster caught you. You must fight!" << endl;
             fight(mon);
         }
     }

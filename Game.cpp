@@ -60,9 +60,10 @@ int main() {
 	srand(time(NULL));
 
     int ch= 0;                // input buffer
-    int direction, mag;
+    int direction, mag, flag, won;
     int* start;               // random start location
     char* name;         // name of character
+    int level=0;        //start at level 0
 
     //making the world
     World game;
@@ -99,15 +100,24 @@ int main() {
     //Person User(UserName, mag, start[0], start[1], 0);
     Person User(UserName, mag, 0,0,0);
     delete[] start;
-
-    game.printMap(row,col,0, User.getXLoc(), User.getYLoc());
+    
+    game.printMap(row,col,level, User);
     
     keypad(stdscr, TRUE);     // Initializing keypad
     noecho();                 // No echo only after keypad
+    
+    won=0;
+    
+    //test level up
+    Key k, k1, k2;
+    User.foundKey(k);
+    User.foundKey(k1);
+    User.foundKey(k2);
+    
 
-
-    while((ch=getch())!= 'q'){
+    while(level<=3 && won==0 && (ch=getch())!= 'q'){
         switch(ch){
+            //User movement on screen
             case KEY_UP: direction= 2; 
                 if (game.IsPassable(User.getXLoc()-1, User.getYLoc(), User.getZLoc())) {
                     User.moveLeft(); //goes up
@@ -128,17 +138,35 @@ int main() {
                     User.moveDown(); //goes left
                 }
                 break;
+            //User found item
+            case 'p':
+                flag=game.checkUserLoc(User);
+                //flag = -1 if no item found
+                break;
+            //User tries advance to next level
+            case 'n':
+                if (level<=2 && User.getBag().getKeyC()>=1) {        //if have a key
+                    User.upLevel();
+                    level++;
+                }
+                break;
         }
-        game.printMap(row,col,0,User.getXLoc(), User.getYLoc());
+        game.printMap(row,col,level,User);
 
-        //print out health to bottom of screen
-        mvprintw(row-8,10,"Health: %d", User.getHealth());
-        //print out bag to bottom of screen
-        mvprintw(row-7,10,"Gold: %d \t Keys: %d \t Potions: %d", User.getBag().getGoldC(), User.getBag().getKeyC(),User.getBag().getPotionC());
+        //print out win message if won
+        if(level==3) {
+            mvprintw((row-20)/2, (col-3*20)/2, "You won! You collected %d gold coins!", User.getBag().getGoldC());
+            won=-1;
+            refresh();
+            sleep(2);
+            endwin();
 
+        }
     }
     
-    endwin();
+    //close window if still open
+    if (level!=3)
+        endwin();
     
     return 0;
 }
