@@ -361,7 +361,7 @@ World::~World(){
 //Randomly generates entire map! How impressive!
 void World::GenerateMap( void ){
 	//temperary variables
-	int i,j,temp;
+	int i,j,temp,randRoom;
 	int iter=0;
 	int location[5];
 
@@ -443,7 +443,13 @@ void World::GenerateMap( void ){
             //characters are generated floor by floor, room by room.
             generateCharacters( Room_List[j][i] );
 
-		}	
+		}
+        //once per floor, pick random room and generate key
+        randRoom=rand()%ROOM_ITER;
+        for (i=0; i<KEY_NUM; i++) {
+            generateKey( Room_List[j][i]);
+        }
+        
 	// end of for loop that goes through floors
 	}
 
@@ -627,11 +633,7 @@ void World::generateItems(Room A){
             }
             else if (item==9) {
                 //if key
-                Key k;
-                k.setLoc(x, y, arr[4]);
-                //add new key to array
-                keys[kArray]=k;
-                kArray++;
+                //do nothing -> keys generated in generateKey() func
             }
             else if (item==10) {
                 //if weapon enhancer
@@ -647,6 +649,21 @@ void World::generateItems(Room A){
 	
 	//cleaning temporary storage
 	delete[] arr;
+}
+//randomly puts keys in rooms, does not matter the room size
+void World::generateKey(Room A){
+    int* arr = A.getLoc();
+    int x,y;
+    
+    //generating random location in the room
+    x = (rand()%(arr[1]-arr[0]-1))+arr[0]+1;
+    y = (rand()%(arr[3]-arr[2]-1))+arr[2]+1;
+    
+    Key k;
+    k.setLoc(x, y, arr[4]);
+    //add new key to array
+    keys[kArray]=k;
+    kArray++;
 }
 //randomly puts characters in rooms, does not matter the room size
 void World::generateCharacters(Room A){
@@ -977,7 +994,7 @@ void World::printMap(int row, int col, int level, Person User){
     //draw walls around outside of map (at x=-1, x=41, y=-1, y=21)
     move(mapX-1,mapY-1);
     //top wall
-    for (i=0; i<MAP_WIDTH+2; i++) {
+    for (i=0; i<MAP_WIDTH+1; i++) {
         printw("%c ", TileIndex[ 1 ].dispCharacter  );
     }
     //left side wall
@@ -987,14 +1004,15 @@ void World::printMap(int row, int col, int level, Person User){
     }
     //bottom wall
     move(mapX + MAP_HEIGHT, mapY -1 );
-    for (i=0; i<MAP_WIDTH+2; i++) {
+    for (i=0; i<MAP_WIDTH+1; i++) {
         printw("%c ", TileIndex[ 1 ].dispCharacter  );
     }
     //right side wall
-    for (i=0; i<MAP_HEIGHT+1; i++) {
-        move(mapX + i, mapY + 2*MAP_WIDTH+1);
+    for (i=0; i<MAP_HEIGHT+2; i++) {
+        move(mapX + i-1, mapY + 2*MAP_WIDTH);
         printw("%c ", TileIndex[ 1 ].dispCharacter  );
     }
+    
     
     //draw items and characters onto map
 	for(j=0;j<MAP_HEIGHT;j++){
@@ -1050,6 +1068,158 @@ void World::printMap(int row, int col, int level, Person User){
     */
 
 	refresh();
+}
+//prints the map with the NCURSES - user can only view limited area
+void World::printMapLIMITED(int row, int col, int level, Person User){
+    //x and y give the user location at the current time
+    
+    int i, j ,k;
+    int buf=-1;
+    int userx, usery;
+    int mapX, mapY; //x and y origins of map in real pixels (equivalent to 0,0 in map pixels)
+    
+    if(level<0 || level>=MAP_LEVELS){
+        throw;
+    }
+    k=level;
+    
+    mapX=(row-MAP_WIDTH)/2;
+    mapY=(col-3*MAP_HEIGHT)/2;
+    
+    erase();
+    
+    //draw walls around outside of map (at x=-1, x=41, y=-1, y=21)
+    move(mapX-1,mapY-1);
+    //top wall
+    for (i=0; i<MAP_WIDTH+1; i++) {
+        printw("%c ", TileIndex[ 1 ].dispCharacter  );
+    }
+    //left side wall
+    for (i=0; i<MAP_HEIGHT+1; i++) {
+        move(mapX + i, mapY - 1);
+        printw("%c ", TileIndex[ 1 ].dispCharacter  );
+    }
+    //bottom wall
+    move(mapX + MAP_HEIGHT, mapY -1 );
+    for (i=0; i<MAP_WIDTH+1; i++) {
+        printw("%c ", TileIndex[ 1 ].dispCharacter  );
+    }
+    //right side wall
+    for (i=0; i<MAP_HEIGHT+2; i++) {
+        move(mapX + i-1, mapY + 2*MAP_WIDTH);
+        printw("%c ", TileIndex[ 1 ].dispCharacter  );
+    }
+    
+    //get user location
+    userx=User.getXLoc();
+    usery=User.getYLoc();
+    
+    //see if user inside room
+    for (int count=0; count<ROOM_ITER && buf==-1; count++) {
+        if (Room_List[k][count].inside(userx, usery, User.getZLoc())) {
+            //set buf to room number that user is currently in
+            buf=count;
+        }
+    }
+    //if user not in room, buf=-1
+    
+    //draw items and characters onto map
+    for(j=0;j<MAP_HEIGHT;j++){
+        move((row-MAP_WIDTH)/2 + j, (col-3*MAP_HEIGHT)/2);
+        for(i=0;i<MAP_WIDTH;i++){
+
+            //if within user's vision
+            if (abs(userx-i)<=3 && abs(usery-j)<=3) {
+
+                // Walls and floors are white
+                if(MapArray[i][j][k]<2){
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter  );
+                    //doors are cyan
+                }else if(MapArray[i][j][k]<4){
+                    attron(COLOR_PAIR(3));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
+                    attroff(COLOR_PAIR(3));
+                    //corridors don't work so doesn't matter
+                }else if(MapArray[i][j][k]<6){
+                    attron(COLOR_PAIR(1));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
+                    attroff(COLOR_PAIR(1));
+                }
+                //only print if within vision and user within same room
+                    //items are green
+                else if (MapArray[i][j][k]<11){
+                    //if in same room or spot is empty
+                    if ((buf!=-1 && Room_List[k][buf].inside(i, j, k)) ||MapArray[i][j][k]==6 ) {
+                        attron(COLOR_PAIR(2));
+                        printw("%c ", ItemIndex[ MapArray[i][j][k] -6 ].dispCharacter );
+                        attroff(COLOR_PAIR(2));
+                    }else {
+                    //if not in same room
+                        attron(COLOR_PAIR(1));
+                        printw("# ");
+                        attroff(COLOR_PAIR(1));
+                    }
+                    //monsters are yellow
+                }else if (MapArray[i][j][k]<15){
+                    //if in same room or spot is empty
+                    if ((buf!=-1 && Room_List[k][buf].inside(i, j, k))||MapArray[i][j][k]==11) {
+                        attron(COLOR_PAIR(4));
+                        printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );
+                        attroff(COLOR_PAIR(4));
+                    } else {
+                    //if not in same room
+                        attron(COLOR_PAIR(1));
+                        printw("# " );
+                        attroff(COLOR_PAIR(1));
+                    }
+                }
+            }
+            //else draw black
+            else {
+                // Walls and floors are black
+                if(MapArray[i][j][k]<2){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter  );
+                    attroff(COLOR_PAIR(6));
+                    //doors are cyan
+                }else if(MapArray[i][j][k]<4){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
+                    attroff(COLOR_PAIR(6));
+                    //corridors don't work so doesn't matter
+                }else if(MapArray[i][j][k]<6){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", TileIndex[ MapArray[i][j][k] ].dispCharacter );
+                    attroff(COLOR_PAIR(6));
+                }
+                //items are green
+                else if (MapArray[i][j][k]<11){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", ItemIndex[ MapArray[i][j][k] -6 ].dispCharacter );
+                    attroff(COLOR_PAIR(6));
+                    //monsters are yellow
+                }else if (MapArray[i][j][k]<15){
+                    attron(COLOR_PAIR(6));
+                    printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );
+                    attroff(COLOR_PAIR(6));
+                }
+            }
+            if (MapArray[i][j][k]==15){
+                //draw user
+                attron(COLOR_PAIR(5));
+                printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );
+                attroff(COLOR_PAIR(5));
+            }
+        
+        }
+    }
+     
+     //print out health to bottom of screen
+     mvprintw(mapX+MAP_HEIGHT+2,mapY+1,"Health: %d", User.getHealth());
+     //print out bag to bottom of screen
+     mvprintw(mapX+MAP_HEIGHT+4,mapY+1,"Gold: %d \t Keys: %d \t Potions: %d", User.getBag().getGoldC(), User.getBag().getKeyC(),User.getBag().getPotionC());
+     
+    refresh();
 }
 
 //check if user has found an item/character

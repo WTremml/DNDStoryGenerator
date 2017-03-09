@@ -61,7 +61,9 @@ int main() {
 
     int ch= 0;                // input buffer
     int buffer = 0;
-    int direction, mag, flag, won;
+    int direction, mag;
+    int won=0;
+    int dead=0;
     int* start;               // random start location
     char* name;         // name of character
     int level=0;        //start at level 0
@@ -81,6 +83,8 @@ int main() {
     init_pair(3, COLOR_CYAN, COLOR_BLACK);
     init_pair(4, COLOR_YELLOW, COLOR_BLACK);
     init_pair(5, COLOR_BLUE, COLOR_BLACK);
+    init_pair(6, COLOR_BLACK, COLOR_BLACK);
+
 
 
     getmaxyx(stdscr,row,col); // get the number of rows and columns
@@ -109,11 +113,9 @@ int main() {
     //Person User(UserName, mag, start[0], start[1], 0);
     Person User(UserName, mag, start[0],start[1],0);
     
-    game.printMap(row,col,level, User);
+    game.printMapLIMITED(row,col,level, User);
     
     keypad(stdscr, TRUE);     // Initializing keypad
-    
-    won=0;
     
     //test level up
     Key k, k1, k2;
@@ -122,7 +124,7 @@ int main() {
     User.foundKey(k2);
     
 
-    while(level<=MAP_LEVELS && won==0 && (ch=getch())!= 'q'){
+    while(level<=MAP_LEVELS && won==0 && (ch=getch())!= 'q' && dead==0){
         switch(ch){
             //User movement on screen
             case KEY_UP: direction= 2; 
@@ -209,11 +211,20 @@ int main() {
                 }
                 break;
         }
-        game.printMap(row,col,level,User);
+        game.printMapLIMITED(row,col,level,User);
         
-
+        //print out lose message if user is dead
+        if (User.isDead()) {
+            erase();
+            mvprintw((row-20)/2, (col-3*20)/2, "You have died!");
+            dead=-1;
+            refresh();
+            sleep(2);
+            endwin();
+        }
         //print out win message if won
         if(level==MAP_LEVELS) {
+            erase();
             mvprintw((row-20)/2, (col-3*20)/2, "You won! You collected %d gold coins!", User.getBag().getGoldC());
             won=-1;
             refresh();
@@ -227,7 +238,7 @@ int main() {
     
     
     //close window if still open
-    if (level!=MAP_LEVELS)
+    if (won!=-1 && dead!=-1)
         endwin();
     
     return 0;
