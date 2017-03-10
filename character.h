@@ -55,6 +55,7 @@ private:
 public:
     Monster();              //default constructor
     Monster(int type, int wander, int agg, int x, int y, int z);
+    Monster(int type);
     Monster(Monster& old);  //copy constructor
     ~Monster() {}           //destructor
     int getType();          //get type of monster
@@ -62,8 +63,8 @@ public:
     int getAggressive();    //get aggressive
     int getWander();        //get wandering
     
-    void fight(Monster m);  //fight other monsters
-    void foundMonster(Monster m);   //found another monster
+    void fight(Monster m, int row, int col);  //fight other monsters
+    void foundMonster(Monster m, int row, int col);   //found another monster
 };
 ///////////////////////////////////////////////////////////////////
 class Dummy: public Character {
@@ -105,7 +106,7 @@ public:
     Bag getBag();               //return copy of bag
     
     bool found(int x, int y, int z);    //returns true if item 'found'
-    void foundMonster(Monster m);       //if encounter monster
+    void foundMonster(Monster m, int row, int col);       //if encounter monster
     void foundCharacter(Dummy d, int row, int col);       //if find another character
     bool foundPotion();             //if find potion
     void foundKey();                   //if find key
@@ -115,9 +116,9 @@ public:
     void usePotion();          //use potion
     void useGold(int g);       //use gold
     
-    void fight(Monster m);      //fight monster
-    void fight1(Dummy d);       //fight dummy
-    void run(Monster m);        //run from monster
+    void fight(Monster m, int row, int col);      //fight monster
+    void fight1(Dummy d, int row, int col);       //fight dummy
+    void run(Monster m, int row, int col);        //run from monster
     void upLevel();             //move up level if have key
 
 };

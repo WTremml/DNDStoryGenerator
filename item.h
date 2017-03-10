@@ -20,7 +20,7 @@ using namespace std;
 
 ///////////////////////////////////////////////////////////////////
 class Item {
-private:
+protected:
     int xLocation;	//xLocation on map
     int yLocation;	//yLocation on map
     int zLocation;	//zLocation on map

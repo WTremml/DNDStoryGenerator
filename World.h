@@ -15,7 +15,7 @@
 #ifndef WORLD_H
 #define WORLD_H
 
-
+#include <unistd.h>
 #include <iostream>
 #include <ncurses.h>
 #include <string>
@@ -308,7 +308,7 @@ class World{
 	void printMap(int row, int col, int level, Person User);
     
     // prints map to screen using NCURSES - user can only see limited part of map
-    void printMapLIMITED(int row, int col, int level, Person User);
+    void printMapLIMITED(int row, int col, int level, Person& User);
     
     //check if user has found an object or computer character
     int checkUserLoc(Person user);
