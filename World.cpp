@@ -1287,14 +1287,14 @@ void World::printMapLIMITED(int row, int col, int level, Person& User){
      if(flag==1){
      	sleep(1);
      	Monster M(0);
-     	User.fight(M, row, col);
+     	User.foundMonster(M, row, col);
      	MapArray[loc[0]][loc[1]][loc[2]]=0;
      	//mvprintw(mapX+MAP_HEIGHT+1,mapY+1,"Health: %d", User.getHealth());
      	//User.setHealth(User.getHealth());
      }else if(flag==2){
      	sleep(1);
      	Monster M(1);
-     	User.fight(M, row, col);
+     	User.foundMonster(M, row, col);
      	MapArray[loc[0]][loc[1]][loc[2]]=0;
      	//mvprintw(mapX+MAP_HEIGHT+1,mapY+1,"Health: %d", User.getHealth());
      	//User.setHealth(User.getHealth());

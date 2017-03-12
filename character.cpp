@@ -251,11 +251,24 @@ void Person::useGold(int g) {       //use gold
     bag1.useGold(g);
 }
 void Person::foundMonster(Monster mon, int row, int col) {        //if encounter monster
-    int choice;
+    int choice=0;
+    
+    erase();
+    mvprintw(row/2,(col-34)/2,"A monster appeared out of nowhere!");
+    move(row/2+4,(col-34)/2);
+    refresh();
+    getch();
+    
     //will they fight or not?
-    cout << "Do you want to fight or run? 1-Fight 2-Run" << endl;
-    cin >> choice;
-        
+    erase();
+    mvprintw(row/2,(col-78)/2,"Would you like to: 1 - fight or 2 - run?");
+    move(row/2+4,(col-78)/2);
+    refresh();
+    while(int(choice)>2+48 || int(choice)<1+48){
+        choice = getch();
+    }
+    choice=choice-48;
+    
     if (choice==1) {        //if fight
         fight(mon,row, col);
     }
@@ -371,12 +384,6 @@ void Person::fight(Monster mon, int row, int col) {
     int hurt;
     bool flag = 1;
 
-    erase();
-    mvprintw(row/2,(col-34)/2,"A monster appeared out of nowhere!");
-    move(row/2+4,(col-34)/2);
-    refresh();
-    getch();
-
 
     while (!mon.isDead() && !isDead()) {          //while can fight
         if (m.isCharged() && m.getType()==1 && flag) {    //is magic=strength AND magic charged
@@ -395,7 +402,7 @@ void Person::fight(Monster mon, int row, int col) {
             //cin >> choice;
             
             if (choice==1) {                //if use super strength
-                mon.setHealth(70);          //kill monster
+                mon.setHealth(0);          //kill monster
                 //cout << "You have killed the monster!" << endl;
                 m.usePower();               //used power
 
@@ -456,7 +463,7 @@ void Person::fight(Monster mon, int row, int col) {
         //monster injured you during fight
         hurt=rand()%(4-mon.getType());          //get hurt 1/4 or 1/3 times depending on type monster
         
-        if (hurt==0) {                          //if player hurt (0 is chosen remainder-->think of as 1/n probability hurt)
+        if (!mon.isDead() && hurt==0) {                          //if player hurt (0 is chosen remainder-->think of as 1/n probability hurt)
             float k = rand()%100;               //factor in armor -> heavier armor = hurt less often
             k=k/100;
             
@@ -546,7 +553,7 @@ void Person::fight1(Dummy d, int row, int col) {
 
 
             if (choice==1) {          //if use super strength
-                d.setHealth(50);       //kill dummy
+                d.setHealth(0);       //kill dummy
                 //cout << "You have killed the dummy!" << endl;
                 m.usePower();         //used power
 
@@ -560,9 +567,6 @@ void Person::fight1(Dummy d, int row, int col) {
                 mvprintw(row/2,(col-26)/2,"You do not use your power.");
                 refresh();
                 getch();
-            }
-            else {
-                //cout << "Invalid entry. Magic not used." << endl;
             }
         }
         //you injured dummy during fight
@@ -582,7 +586,7 @@ void Person::fight1(Dummy d, int row, int col) {
         }
         hurt=rand()%(4-nice);    //get hurt 1/4 or 1/3 times depending on how nice dummy is
         
-        if (hurt==0) {                      //if player hurt (0 is chosen remainder-->think of as 1/n probability hurt)
+        if (!d.isDead() && hurt==0) {                      //if player hurt (0 is chosen remainder-->think of as 1/n probability hurt)
             float k = rand()%100;           //factor in armor -> heavier armor = hurt less often
             k=k/100;
             
@@ -654,25 +658,29 @@ void Person::fight1(Dummy d, int row, int col) {
     }
 }
 void Person::run(Monster mon, int row, int col) {
-    int choice;
+    int choice=0;
     int escape;
     int caught;
     if (m.isCharged() && m.getType()==0) {      //if magic charged and super speed
         //run away from monster works
         //cout << "Do you want to use your magic power to run away? 1-Yes 2-No" << endl;
         //cin >> choice;
-        
-        if (mon.getType()==1 && health<50) {     //use magic if big monster and low on health
-            choice=1;
+       
+        erase();
+        mvprintw(row/2,(col-72)/2,"Do you want to use your magic power to run away? 1-Yes 2-No");
+        move(row/2+4,(col-72)/2);
+        refresh();
+        while(int(choice)>2+48 || int(choice)<1+48){
+            choice = getch();
         }
-        else {          //don't use magic
-            choice=2;
-        }
+        choice=choice-48;
         
         if (choice==1) {        //if use super speed
             mon.setLoc(-1,-1,-1);
-            //cout << "You ran away! The monster tried to chase you, but got lost." << endl;
-            m.usePower();       //used power
+            erase();
+            mvprintw(row/2,(col-77)/2,"You lost the monster!");
+            refresh();
+            getch();            m.usePower();       //used power
         }
         else if (choice==2) {
             //cout << "You have decided not to use your magic." << endl;
@@ -686,20 +694,27 @@ void Person::run(Monster mon, int row, int col) {
     else {
         escape=rand()%(mon.getAggressive());    //can run away 1/1 - 1/10 times depending on mon aggression
         if (escape==0) {
-            mon.setLoc(-1,-1,-1);
-            //cout << "You ran away! " << endl;
+            
             caught=rand()%(mon.getWander());    //can run away 1/1 - 1/10 times depending on mon wandering
                                                     //escape more often is mon has low wandering speed
             if (caught==0) {
-                //cout << "The monster tried to chase you, but got lost." << endl;
-            }
+                erase();
+                mvprintw(row/2,(col-77)/2,"You lost the monster!");
+                refresh();
+                getch();            }
             else {
-                //cout << "The monster caught you. You must fight!" << endl;
+                erase();
+                mvprintw(row/2,(col-77)/2,"The monster caught you. You must fight!");
+                refresh();
+                getch();
                 fight(mon, row, col);
             }
         }
         else {
-            //cout << "The monster caught you. You must fight!" << endl;
+            erase();
+            mvprintw(row/2,(col-77)/2,"The monster caught you. You must fight!");
+            refresh();
+            getch();
             fight(mon, row, col);
         }
     }
