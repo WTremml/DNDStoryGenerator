@@ -231,7 +231,7 @@ int Magic(int row, int col){
 		mvprintw((row)/2,(col-strlen(A2))/2,"%s", A2);
 		mvprintw((row)/2+3,(col-strlen(A2))/2,"p - pickup items you are standing on");
 		mvprintw((row)/2+4,(col-strlen(A2))/2,"n - advance to the next level once you have a key");
-		mvprintw((row)/2+5,(col-strlen(A2))/2,"q - quite the game at any time (does not save!)");
+		mvprintw((row)/2+5,(col-strlen(A2))/2,"q - quit the game at any time (does not save!)");
 		mvprintw((row)/2+7,(col-strlen(A2))/2,"Arrows - move your character");
 		refresh();
 
@@ -240,7 +240,7 @@ int Magic(int row, int col){
 		mvprintw((row)/2,(col-strlen(A3))/2,"%s", A3);
 		mvprintw((row)/2+3,(col-strlen(A3))/2,"p - pickup items you are standing on");
 		mvprintw((row)/2+4,(col-strlen(A3))/2,"n - advance to the next level once you have a key");
-		mvprintw((row)/2+5,(col-strlen(A3))/2,"q - quite the game at any time (does not save!)");
+		mvprintw((row)/2+5,(col-strlen(A3))/2,"q - quit the game at any time (does not save!)");
 		mvprintw((row)/2+7,(col-strlen(A3))/2,"Arrows - move your character");
 		refresh();
 	}
