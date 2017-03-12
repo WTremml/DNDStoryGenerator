@@ -215,13 +215,21 @@ int main() {
             case 'n':
                 if (level<MAP_LEVELS && User.getBag().getKeyC()>=1) {        //if have a key
                     level++;
-                    start = game.getStart(level);
-                    User.setLoc(start[0],start[1],level);
-                    User.upLevel();
 
-                    delete[] start;
-                    start = NULL;
-                    
+                    if(level!=MAP_LEVELS){
+                        start = game.getStart(level);
+                        User.setLoc(start[0],start[1],level);
+                        User.upLevel();
+
+                        delete[] start;
+                        start = NULL;
+                    }
+                    erase();
+                    mvprintw(row/2, (col-23)/2, "You are now on Level %d",level);
+                    refresh();
+                    getch();
+
+
                 }
                 break;
         }
@@ -245,7 +253,7 @@ int main() {
             endwin();
 
         }else{
-            game.printMapLIMITED(row,col,level,User);
+            game.printMapLIMITED(row,col,level, User);
         }
 
 

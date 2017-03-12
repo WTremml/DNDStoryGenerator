@@ -358,6 +358,51 @@ World::~World(){
 	
 }
 
+World::World(const World& old){
+	int i,j,k;
+
+	//allocating memory for map
+	MapArray = new int**[MAP_WIDTH];
+	for (int i = 0; i < MAP_WIDTH; ++i) {
+		MapArray[i] = new int*[MAP_HEIGHT];
+	    for (int j = 0; j < MAP_WIDTH; ++j){
+	     	MapArray[i][j] = new int[MAP_LEVELS];
+	  	}
+	 }
+
+	//allocating memory for room list
+	Room_List = new Room*[MAP_LEVELS];
+	for (int i = 0; i < ROOM_ITER; ++i) {
+		Room_List[i] = new Room[ROOM_ITER];
+	 }
+
+	//Initializing map to zero. No need to do this for the room list
+	for(i=0;i<MAP_WIDTH;i++){
+		for(j=0;j<MAP_HEIGHT;j++){
+			for(k=0;k<MAP_LEVELS;k++){
+				MapArray[i][j][k] = old.MapArray[i][j][k];
+			}
+		}
+	}
+	for(j=0;j<MAP_LEVELS;j++){
+		for (i = 0; i < ROOM_ITER; ++i) {
+			Room_List[j][i] = old.Room_List[j][i];
+		}
+	}
+	
+
+    rows=old.rows;
+    cols=old.cols;
+    pArray=old.pArray;
+    gArray=old.gArray;
+    kArray=old.kArray;
+    wArray=old.wArray;
+    mArray=old.mArray;
+    dArray=old.dArray;
+
+
+}
+
 //Randomly generates entire map! How impressive!
 void World::GenerateMap( void ){
 	//temperary variables
@@ -448,6 +493,7 @@ void World::GenerateMap( void ){
 		}
         //once per floor, pick random room and generate key
         randRoom=rand()%ROOM_ITER;
+        std::cout<< randRoom << std::endl;
         generateKey( Room_List[j][randRoom]);
         
 	// end of for loop that goes through floors
@@ -611,7 +657,7 @@ void World::generateItems(Room A){
 		//items are numbered 6-10
 		//items can only be placed on empty floor space
 		if(MapArray[x][y][arr[4]]==0) {
-            item=(rand()%5)+6;
+            item=(rand()%4)+7;
 			MapArray[x][y][arr[4]]=item;
             
             //add item to array of type
@@ -1067,11 +1113,13 @@ void World::printMap(int row, int col, int level, Person User){
 	refresh();
 }
 //prints the map with the NCURSES - user can only view limited area
-void World::printMapLIMITED(int row, int col, int level, Person User){
+void World::printMapLIMITED(int row, int col, int level, Person& User){
     //x and y give the user location at the current time
     
     int i, j ,k;
     int buf=-1;
+    int flag =0;
+    int loc[3];
     int userx, usery;
     int mapX, mapY; //x and y origins of map in real pixels (equivalent to 0,0 in map pixels)
     
@@ -1160,6 +1208,24 @@ void World::printMapLIMITED(int row, int col, int level, Person User){
                 }else if (MapArray[i][j][k]<15){
                     //if in same room or spot is empty
                     if ((buf!=-1 && Room_List[k][buf].inside(i, j, k))||MapArray[i][j][k]==11) {
+
+                    	if( MapArray[i][j][k]==12){
+                    		flag = 1;
+                    		loc[0]=i;
+                    		loc[1]=j;
+                    		loc[2]=k;
+                    	}else if (MapArray[i][j][k]==13){
+                    		flag = 2;
+                    		loc[0]=i;
+                    		loc[1]=j;
+                    		loc[2]=k;
+                    	}else if (MapArray[i][j][k]==14){
+                    		flag = 3;
+                    		loc[0]=i;
+                    		loc[1]=j;
+                    		loc[2]=k;
+                    	}
+
                         attron(COLOR_PAIR(4));
                         printw("%c ", CharIndex[ MapArray[i][j][k] -11 ].dispCharacter );
                         attroff(COLOR_PAIR(4));
@@ -1216,7 +1282,30 @@ void World::printMapLIMITED(int row, int col, int level, Person User){
      //print out bag to bottom of screen
      mvprintw(mapX+MAP_HEIGHT+4,mapY+1,"Gold: %d \t Keys: %d \t Potions: %d", User.getBag().getGoldC(), User.getBag().getKeyC(),User.getBag().getPotionC());
      
-    refresh();
+     refresh();
+
+     if(flag==1){
+     	sleep(1);
+     	Monster M(0);
+     	User.fight(M, row, col);
+     	MapArray[loc[0]][loc[1]][loc[2]]=0;
+     	//mvprintw(mapX+MAP_HEIGHT+1,mapY+1,"Health: %d", User.getHealth());
+     	//User.setHealth(User.getHealth());
+     }else if(flag==2){
+     	sleep(1);
+     	Monster M(1);
+     	User.fight(M, row, col);
+     	MapArray[loc[0]][loc[1]][loc[2]]=0;
+     	//mvprintw(mapX+MAP_HEIGHT+1,mapY+1,"Health: %d", User.getHealth());
+     	//User.setHealth(User.getHealth());
+     }else if(flag==3){
+     	sleep(1);
+     	Dummy D;
+     	User.foundCharacter(D, row, col);
+     	MapArray[loc[0]][loc[1]][loc[2]]=0;
+     	//mvprintw(mapX+MAP_HEIGHT+1,mapY+1,"Health: %d", User.getHealth());
+     	//User.setHealth(User.getHealth());
+     }
 }
 
 //check if user has found an item/character

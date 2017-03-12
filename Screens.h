@@ -84,7 +84,6 @@ char* Name(int row, int col){
   	char welcome[] = "Welcome traveler. You seem to be a bit lost?";
   	char tell[] = "Tell me? What is your name?";
 
-
   
 	mvprintw((row)/2,(col-strlen(welcome))/2,"%s", welcome);
 	refresh();
@@ -114,7 +113,7 @@ int Magic(int row, int col){
 
 	char wiz[26][40] = { "   ",
 	"     ",
-	"	  	        _,._         ",
+	"	   	      _,._         ",
 	"	  .||,       /_ _\\\\        ",
 	"	 \\.`',/      |'L'| |       ",
 	"	 = ,. =      | -,| L       ",
@@ -168,7 +167,7 @@ int Magic(int row, int col){
 
 	char elf[24][40] = {"     ",
 	"      ",
-	"  	           .-----.   ",
+	"  	       .-----.   ",
 	"   \\ ' /   _/    )/   ",
 	"  - ( ) -('---''--)   ",
 	"   / . \\((()\\^_^/)()   ",
@@ -193,7 +192,10 @@ int Magic(int row, int col){
 
 	char mag1[] = "Now you must tell me what you want to be.";
 	char mag2[] = "Each type has a different skill, so choose carefully!";
-	char very[] = "Very well. Press any key to continue.";
+
+	char A1[] = "You can cast a spell from afar and damage the monster with a monstrous hit!";
+  	char A2[] = "You are trained in the arts of war. The enemy may think you are down, but you get right back up.";
+  	char A3[] = "Your super speed (and dashing good looks) allow you to make a quick escape!";
 
 
   	for(i=0;i<26;i++){
@@ -214,9 +216,35 @@ int Magic(int row, int col){
 	while(int(ch)>3+48 || int(ch)<1+48){
 		ch = getch();
 	}
-	erase();
-	mvprintw((row)/2,(col-strlen(very))/2,"%s", very);
-	refresh();
+
+	if((int(ch)-48) ==1){
+		erase();
+		mvprintw((row)/2,(col-strlen(A1))/2,"%s", A1);
+		mvprintw((row)/2+3,(col-strlen(A1))/2,"p - pickup items you are standing on");
+		mvprintw((row)/2+4,(col-strlen(A1))/2,"n - advance to the next level once you have a key");
+		mvprintw((row)/2+5,(col-strlen(A1))/2,"q - quite the game at any time (does not save!)");
+		mvprintw((row)/2+7,(col-strlen(A1))/2,"Arrows - move your character");
+		refresh();
+
+	}else if((int(ch)-48) ==2){
+		erase();
+		mvprintw((row)/2,(col-strlen(A2))/2,"%s", A2);
+		mvprintw((row)/2+3,(col-strlen(A2))/2,"p - pickup items you are standing on");
+		mvprintw((row)/2+4,(col-strlen(A2))/2,"n - advance to the next level once you have a key");
+		mvprintw((row)/2+5,(col-strlen(A2))/2,"q - quite the game at any time (does not save!)");
+		mvprintw((row)/2+7,(col-strlen(A2))/2,"Arrows - move your character");
+		refresh();
+
+	}else {
+		erase();
+		mvprintw((row)/2,(col-strlen(A3))/2,"%s", A3);
+		mvprintw((row)/2+3,(col-strlen(A3))/2,"p - pickup items you are standing on");
+		mvprintw((row)/2+4,(col-strlen(A3))/2,"n - advance to the next level once you have a key");
+		mvprintw((row)/2+5,(col-strlen(A3))/2,"q - quite the game at any time (does not save!)");
+		mvprintw((row)/2+7,(col-strlen(A3))/2,"Arrows - move your character");
+		refresh();
+	}
+	
 
 	getch();
 	erase();
