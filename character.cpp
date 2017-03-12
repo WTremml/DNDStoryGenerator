@@ -398,11 +398,17 @@ void Person::fight(Monster mon, int row, int col) {
                 mon.setHealth(70);          //kill monster
                 //cout << "You have killed the monster!" << endl;
                 m.usePower();               //used power
+
+                erase();
+                mvprintw(row/2,(col-39)/2,"You have decided to use your magic!");
+                refresh();
+                getch();
             }
             else if (choice==2) {
                 erase();
                 mvprintw(row/2,(col-39)/2,"You have decided not to use your magic.");
                 refresh();
+                getch();
                 
             }
             else {
@@ -543,6 +549,11 @@ void Person::fight1(Dummy d, int row, int col) {
                 d.setHealth(50);       //kill dummy
                 //cout << "You have killed the dummy!" << endl;
                 m.usePower();         //used power
+
+                erase();
+                mvprintw(row/2,(col-39)/2,"You have decided to use your magic!");
+                refresh();
+                getch();
             }
             else if (choice==2) {
                 erase();

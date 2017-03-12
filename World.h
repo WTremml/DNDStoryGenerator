@@ -259,6 +259,8 @@ class World{
 	World();
 	//destructor
 	~World();
+	//copy constructor
+	World(const World& old);
 
 	//Generates a 20x20x3 array with 1 as walls
 	void GenerateMap( void );

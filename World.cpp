@@ -358,6 +358,51 @@ World::~World(){
 	
 }
 
+World::World(const World& old){
+	int i,j,k;
+
+	//allocating memory for map
+	MapArray = new int**[MAP_WIDTH];
+	for (int i = 0; i < MAP_WIDTH; ++i) {
+		MapArray[i] = new int*[MAP_HEIGHT];
+	    for (int j = 0; j < MAP_WIDTH; ++j){
+	     	MapArray[i][j] = new int[MAP_LEVELS];
+	  	}
+	 }
+
+	//allocating memory for room list
+	Room_List = new Room*[MAP_LEVELS];
+	for (int i = 0; i < ROOM_ITER; ++i) {
+		Room_List[i] = new Room[ROOM_ITER];
+	 }
+
+	//Initializing map to zero. No need to do this for the room list
+	for(i=0;i<MAP_WIDTH;i++){
+		for(j=0;j<MAP_HEIGHT;j++){
+			for(k=0;k<MAP_LEVELS;k++){
+				MapArray[i][j][k] = old.MapArray[i][j][k];
+			}
+		}
+	}
+	for(j=0;j<MAP_LEVELS;j++){
+		for (i = 0; i < ROOM_ITER; ++i) {
+			Room_List[j][i] = old.Room_List[j][i];
+		}
+	}
+	
+
+    rows=old.rows;
+    cols=old.cols;
+    pArray=old.pArray;
+    gArray=old.gArray;
+    kArray=old.kArray;
+    wArray=old.wArray;
+    mArray=old.mArray;
+    dArray=old.dArray;
+
+
+}
+
 //Randomly generates entire map! How impressive!
 void World::GenerateMap( void ){
 	//temperary variables

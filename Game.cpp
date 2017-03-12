@@ -224,6 +224,12 @@ int main() {
                         delete[] start;
                         start = NULL;
                     }
+                    erase();
+                    mvprintw(row/2, (col-23)/2, "You are now on Level %d",level);
+                    refresh();
+                    getch();
+
+
                 }
                 break;
         }
