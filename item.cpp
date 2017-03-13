@@ -1,8 +1,8 @@
 /*
- * Item.h
+ * Item.cpp
  *
  *  Created on: March 1, 2017
- *      header file for usable item classes (Item, Weapon, Bag, Potion, Gold, Key)
+ *      cpp file for usable item classes (Item, Weapon, Bag, Potion, Gold, Key)
  *
  *  Emily Chao
  */

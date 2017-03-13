@@ -1,8 +1,8 @@
  /*
- * World.h
+ * World.cpp
  *
  *  Created on: Feb 24, 2017
- *      header file for generating the entire world dyamically
+ *      cpp file for generating the entire world dyamically
  *		
  *  Will Tremml
  */

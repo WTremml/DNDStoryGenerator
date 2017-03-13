@@ -1,7 +1,7 @@
 //easier just to do everything in-line
 
 /* Will Tremml
-Linked List post-fix stack
+Linked List 
 2/23/17
 */
 
