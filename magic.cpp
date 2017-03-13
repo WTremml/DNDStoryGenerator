@@ -1,8 +1,8 @@
 /*
- * Magic.h
+ * Magic.cpp
  *
  *  Created on: March 1, 2017
- *      header file for magic class
+ *      cpp file for magic class
  *
  *  Emily Chao
  */
